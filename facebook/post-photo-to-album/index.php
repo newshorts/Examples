@@ -1,4 +1,4 @@
-<?php require_once 'include' . DIRECTORY_SEPARATOR . 'config.php'; ?>
+<?php require_once 'includes' . DIRECTORY_SEPARATOR . 'config.php'; ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -49,10 +49,14 @@
                     $('.upload').on('connected', function() {
                         var cwd = window.location.protocol + '//' + window.location.host + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))  
                         
+                        // give the browser some time to get all the information from the facebook sdk
                         setTimeout(function() {
+                            
+                            // make the call to our php backend
                             $.get(cwd + "/upload/?upload=true", function(data) {
                                 console.dir(data);
 
+                                // if we respond true, it means the upload worked
                                 if(data.response == true) {
                                     alert('posted to your facebook profile!');
                                 }

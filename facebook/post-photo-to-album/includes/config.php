@@ -19,7 +19,7 @@
         );
     }
     
-    // the image you want to post to facebook
+    // the image
     $path_to_image = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 'facebook_share.jpg';
     
 ?>
