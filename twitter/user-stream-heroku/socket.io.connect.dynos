@@ -1,0 +1,70 @@
+var redis;
+    
+var setRedisRemote = function() {
+    var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+    redis = require("redis").createClient(rtg.port, rtg.hostname);
+    
+    redis.auth(rtg.auth.split(":")[1]); 
+    
+    // socket io different redis
+    
+    /**
+     *  NOTE: if you want to connect all workers and each worker can broadcast to the whole cluster, set this...
+     *  
+     *  This will connect all workers. If you just need to broadcast individually, dont set and socket io will
+     *  use its default memorystore
+     *  
+     * */
+    
+    var RedisStore = require('socket.io/lib/stores/redis'),
+        s_redis  = require('socket.io/node_modules/redis'),
+        pub    = s_redis.createClient(rtg.port, rtg.hostname),
+        sub    = s_redis.createClient(rtg.port, rtg.hostname),
+        client = s_redis.createClient(rtg.port, rtg.hostname);
+
+    pub.auth(rtg.auth.split(":")[1], function (err) { if (err) throw err; });
+    sub.auth(rtg.auth.split(":")[1], function (err) { if (err) throw err; });
+    client.auth(rtg.auth.split(":")[1], function (err) { if (err) throw err; });
+    
+    io.set('store', new RedisStore({
+        redis    : s_redis,
+        redisPub : pub,
+        redisSub : sub,
+        redisClient : client
+    }));
+};
+
+var setRedisLocal = function() {
+    
+    redis = require("redis").createClient();
+    
+    /**
+     *  NOTE: if you want to connect all workers and each worker can broadcast to the whole cluster, set this...
+     *  
+     *  This will connect all workers. If you just need to broadcast individually, dont set and socket io will
+     *  use its default memorystore
+     *  
+     * */
+    
+    // socket io different redis
+    var RedisStore = require('socket.io/lib/stores/redis'),
+        s_redis  = require('socket.io/node_modules/redis'),
+        pub    = s_redis.createClient(),
+        sub    = s_redis.createClient(),
+        client = s_redis.createClient();
+
+    io.set('store', new RedisStore({
+            redisPub : pub,
+            redisSub : sub,
+            redisClient : client
+    }));
+};
+    
+if (process.env.REDISTOGO_URL) {
+    
+    setRedisRemote();
+    
+} else {
+    
+    setRedisLocal();
+}

@@ -1,1 +1,24 @@
-coming soon...
+download
+
+curl -O http://download.redis.io/redis-stable.tar.gz
+tar -xvzf redis-stable.tar.gz
+rm redis-stable.tar.gz
+cd redis-stable
+make
+sudo make install
+
+npm install
+
+redis-server
+foreman start
+
+confirm working???
+
+git init
+git add .
+git commit -m "init"
+
+heroku login
+heroku apps:create example
+git push heroku master
+

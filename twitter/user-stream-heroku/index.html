@@ -1,0 +1,65 @@
+<!-- 
+    Author: Mike Newell © 2012
+-->
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    
+                    var lastTweet = '';
+                    
+                    var update = function(tweet) {
+                        
+                        $('#text').removeClass('active');
+                        
+                        $('#text').animate({
+                            opacity: 0.0
+                        }, 500, function() {
+                            $(this).html(tweet);
+                            animateIn();
+                        });
+                    };
+                    
+                    var animateIn = function() {
+                        $('#text').addClass('active');
+                        $('#text').animate({
+                            opacity: 1.0
+                        }, 200, function() {
+                            
+                        });
+                        
+                    };
+                    
+                    // SERVER SETTINGS FOR LIVE TEST
+                    var l = window.location;
+                    var socket = io.connect(l.origin);
+                    socket.on('tweet', function (data) {
+                        console.log(data);
+                        
+                        if(data.tweetText != lastTweet) {
+                            lastTweet = data.tweetText;
+                            update(data.tweetText);
+                        }
+
+                    });
+                });
+            })(jQuery);
+                    
+        </script>
+    </head>
+    <body>
+        <div id="wrap">
+            <p id="text"></p>
+        </div>
+    </body>
+</html>
