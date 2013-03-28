@@ -1,0 +1,262 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>
+//            (function() {
+//                var lastTime = 0;
+//                var vendors = ['ms', 'moz', 'webkit', 'o'];
+//                for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+//                    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+//                    window.cancelAnimationFrame = 
+//                      window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+//                }
+//
+//                if (!window.requestAnimationFrame)
+//                    window.requestAnimationFrame = function(callback, element) {
+//                        var currTime = new Date().getTime();
+//                        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+//                        var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+//                          timeToCall);
+//                        lastTime = currTime + timeToCall;
+//                        return id;
+//                    };
+//
+//                if (!window.cancelAnimationFrame)
+//                    window.cancelAnimationFrame = function(id) {
+//                        clearTimeout(id);
+//                    };
+//            }());
+
+// requestAnim shim layer by Paul Irish
+    window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(/* function */ callback, /* DOMElement */ element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+        </script>
+        <style>
+            #wrap {
+                width: 100%;
+                background-color: none;
+                position: relative;
+            }
+            
+            #frames {
+                position: relative;
+            }
+            
+            #frames img {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            
+            #anim {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            
+            #canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 1920px;
+                height: 1080px;
+            }
+            
+            .status {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                
+                display: block;
+                width: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrap">
+            <div id="frames"></div>
+            <div id="animation">
+                <canvas id="canvas" width="1920" height="1080"></canvas>
+            </div>
+            <h3 class="status"></h3>
+        </div>
+        <script type="text/javascript">
+            (function($) {
+                $(window).load(function() {
+                    
+                    // config
+                    var count = 150;
+                    var autoPlay = false;
+                    
+                    // load image into an array
+                    var imgArr = new Array(),
+                        bufferArr = new Array(),
+                        loadedImages = 0,
+                        loadedBuffers = 0,
+                        _status = $('.status'),
+                        canvas = document.getElementById('canvas'),
+                        ctx = canvas.getContext('2d'),
+                        animFrame = {},
+                        add = 1,
+                        frameCount = 1;
+                    
+                    var loadImages = function() {
+                        var c = count;
+                        var list = new Array();
+                        for(var i = 0; i < c; i++) {
+                            var s = pad(i);
+                            list.push('https://s3-us-west-1.amazonaws.com/gspbetagroup-examples/images/canvas-buffer/hd/'+s+'.jpg');
+                        }
+                        alert('Finished creating list');
+                        console.dir(list)
+                        addImagesToArr(list);
+                    };
+                    
+                    function handleLoadedImages(evt) {
+                        
+                        var ia = imgArr;
+                        
+                        var status = _status;
+                        status.text('Images: ' + loadedImages);
+                        
+                        console.log('imgArr: ' + ia + ' loadedImages: ' + loadedImages)
+                        
+                        if(loadedImages == (ia.length - 1)) {
+                            alert('finished loading images to dom, adding images to buffer')
+                            addImagesToBuffer();
+                        }
+                        
+                        loadedImages++;
+                    }
+                    
+                    var addImagesToArr = function(list) {
+                        var len = list.length;
+                        for(var i  = 0; i < len; i++) {
+                            var img = new Image();
+                            img.width = 1920;
+                            img.height = 1080;
+                            img.src = list[i];
+                            
+                            img.onload = handleLoadedImages;
+                            imgArr.push(img);
+                            
+                            delete img;
+                        }
+                    };
+                    
+                    // load image data from each image onto a new canvas element
+                    var addImagesToBuffer = function() {
+                        var ia = imgArr;
+                        chunk(ia, createBuffer, this)
+                    };
+                    
+                    var createBuffer = function(img) {
+                        
+                        console.log(img)
+                        var status = _status;
+                        status.text('Loaded Buffers: ' + loadedBuffers);
+                        
+                        var ba = bufferArr,
+                            lb = loadedBuffers,
+                            li = loadedImages;
+                        
+                        var buffer = document.createElement('canvas');
+                        buffer.width = img.width;
+                        buffer.height = img.height;
+                        var bufferCtx = buffer.getContext('2d');
+                        
+                        bufferCtx.drawImage(img, 0, 0);
+                        ba.push(buffer);
+                        
+                        delete buffer;
+                        delete bufferCtx;
+                        
+                        ++loadedBuffers;
+                        
+                        console.log('lb = ' + lb + ' li = ' + li)
+                        if((lb + 1) == li) {                            
+                            console.log('rendering')
+                            if(autoPlay) {
+                                renderLoop();
+                            } else {
+                                $('#canvas').on('mousemove', function(evt) {
+                                    console.dir(evt)
+                                    var mouseX = evt.pageX;
+                                    _status.text('mouseX: ' + mouseX)
+                                    renderMouse(mouseX)
+                                });
+                            }
+ 
+                        }
+                        
+                        return;
+                    };
+                    
+                    function chunk(array, process, context){
+                        var items = array.concat();   //clone the array
+                        setTimeout(function(){
+                            var item = items.shift();
+                            process.call(context, item);
+
+                            if (items.length > 0){
+                                setTimeout(arguments.callee, 100);
+                            }
+                        }, 100);
+                    }
+                    // render frames by incrementing up and down the list
+                    var render = function() {
+                        
+                        var c = ctx;
+                        
+                        var len = bufferArr.length;
+                        
+                        if(frameCount == 0 || frameCount == (len - 1)) {
+                            add *= -1;
+                        }
+                        
+                        frameCount += add;
+                        c.drawImage(bufferArr[frameCount], 0, 0);
+                        
+                        
+                    }
+                    
+                    var renderLoop = function() {
+                        animFrame = requestAnimFrame(renderLoop);
+                        render();
+                    };
+                    
+                    var renderMouse = function(x) {
+                        var c = ctx;
+                        var perc = (count/1920);
+                        var frame = Math.ceil(x * perc);
+                        c.drawImage(bufferArr[frame], 0, 0);
+                    };
+                    
+                    // helpers
+                    var pad = function(num) {
+                        var s = "000000000" + num;
+                        return s.substr(s.length-4);
+                    };
+                    
+                    // start
+                    loadImages();
+                });
+            })(jQuery)
+        </script>
+    </body>
+</html>
