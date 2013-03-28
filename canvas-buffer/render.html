@@ -214,9 +214,9 @@ and open the template in the editor.
                             process.call(context, item);
 
                             if (items.length > 0){
-                                setTimeout(arguments.callee, 100);
+                                setTimeout(arguments.callee, 10);
                             }
-                        }, 100);
+                        }, 10);
                     }
                     // render frames by incrementing up and down the list
                     var render = function() {
