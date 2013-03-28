@@ -1,0 +1,256 @@
+<!-- 
+    Author: Mike Newell © 2012
+-->
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script>
+            (function() {
+                var lastTime = 0;
+                var vendors = ['ms', 'moz', 'webkit', 'o'];
+                for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+                    window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+                    window.cancelAnimationFrame = 
+                      window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+                }
+
+                if (!window.requestAnimationFrame)
+                    window.requestAnimationFrame = function(callback, element) {
+                        var currTime = new Date().getTime();
+                        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                        var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+                          timeToCall);
+                        lastTime = currTime + timeToCall;
+                        return id;
+                    };
+
+                if (!window.cancelAnimationFrame)
+                    window.cancelAnimationFrame = function(id) {
+                        clearTimeout(id);
+                    };
+            }());
+        </script>
+        <style>
+            #wrap {
+                width: 100%;
+                background-color: none;
+                position: relative;
+            }
+            
+            #frames {
+                position: relative;
+            }
+            
+            #frames img {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            
+            #anim {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            
+            #canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 1920px;
+                height: 1080px;
+            }
+            
+            #status {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                
+                display: block;
+                width: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrap">
+            
+            <div id="frames">
+                <!--<img src="http://worktogether.cisco.com/img/frames/1920x1080/hd/0000.jpg" />-->
+            </div>
+            <div id="anim">
+                <img id="frame" src="" />
+                <canvas id="canvas" width="1920" height="1080"></canvas>
+            </div>
+            
+            <h3 id="status"></h3>
+            
+        </div>
+        <script>
+            
+            /*
+             *
+             * TODO: preload images in array, write each image to a canvas, draw animation from array of cached canvases
+             **/
+            (function($) {
+                $(window).load(function() {
+                    
+                    var bufferArr = new Array(),
+                        imgArr = new Array(),
+                        animFrame,
+                        add = 1,
+                        frameCount, 
+                        loadedImages = 1;
+                    
+                    var addToImagesArr = function(imgCount) {
+                        
+                        for(var i = 0; i < imgCount; i++) {
+                            // get padded number
+                            var s = pad(i);
+                            
+                            // make a new image
+                            var img = new Image();
+                            img.width = 1920;
+                            img.height = 1080;
+                            img.src = 'http://worktogether.cisco.com/img/frames/1920x1080/hd/'+s+'.jpg'
+                            
+                            img.onload = handleLoadedImages;
+
+                            imgArr.push(img);
+
+                            delete img;
+                            
+                        }
+                        
+                        if(imgArr.length > 1) {
+                            console.log("Image Array");
+                            console.dir(imgArr);
+                            alert('added images');
+                        }
+                        
+                    };
+                    
+                    var handleLoadedImages = function() {
+                        ++loadedImages;
+                        
+                        $('#status').text('loading: ' + loadedImages);
+                        
+                        if(loadedImages == imgArr.length) {
+                            addImagesToBuffer();
+                        }
+                    }
+                    
+                    var addImagesToBuffer = function() {
+                        console.dir(this);
+                        var imgCount = imgArr.length;
+                        var imgArr = imgArr;
+                        var bufferArr = bufferArr;
+//                        for(var i = 0; i < imgCount; i++) {
+//                            
+//                            console.log('buffering: ' + i);
+//                            $('#status').text('buffering: ' + i);
+//                            
+//                            // make a new canvas element
+//                            var buffer = document.createElement('canvas');
+//                            buffer.width = imgArr[i].width;
+//                            buffer.height = imgArr[i].height;
+//                            var bufferCtx = buffer.getContext('2d');
+//                            
+//                            // draw the image to the new canvas elem
+////                            console.log(imgArr[i]);
+//                            
+//                            bufferCtx.drawImage(imgArr[i], 0, 0);
+//                            
+//                            // add the canvas to the buffer array
+//                            bufferArr.push(buffer);
+//                            
+//                            delete window.buffer;
+//                            delete this.buffer;
+//                            delete this.bufferCtx;
+//                            
+//                            
+//                            
+//                        }
+
+                        var self = this;
+                        
+                        (function myLoop (i) {          
+                            setTimeout(function () {   
+                                
+                                console.log('buffering: ' + i);
+                                $('#status').text('buffering: ' + i);
+
+                                // make a new canvas element
+                                var buffer = document.createElement('canvas');
+                                buffer.width = imgArr[i].width;
+                                buffer.height = imgArr[i].height;
+                                var bufferCtx = buffer.getContext('2d');
+
+                                // draw the image to the new canvas elem
+    //                            console.log(imgArr[i]);
+
+                                bufferCtx.drawImage(imgArr[i], 0, 0);
+
+                                // add the canvas to the buffer array
+                                self.bufferArr.push(buffer);
+
+                                delete window.buffer;
+                                delete this.buffer;
+                                delete this.bufferCtx;
+                                
+                                if (--i) myLoop(i);
+                            }, 100);
+                        })(imgCount);
+                        
+                        frameCount = bufferArr.length;
+                        
+                        if(bufferArr.length > 1) {
+                            renderLoop();
+                            console.log("Buffer Array");
+                            console.dir(bufferArr);
+                            alert('images buffered');
+                        }
+                    }
+                    
+                    var render = function() {
+                        
+                        var canvas = document.getElementById('canvas');
+                        var ctx = canvas.getContext('2d');
+                        
+                        var len = bufferArr.length;
+                        
+                        if(frameCount == 0 || frameCount == len) {
+                            add *= -1;
+                        }
+                        
+                        frameCount += add;
+                        
+                        ctx.drawImage(bufferArr[frameCount], 0, 0);
+                        
+                        
+                    }
+                    
+                    var renderLoop = function() {
+                        animFrame = requestAnimationFrame(renderLoop);
+                        render();
+                    }
+                    
+                    var pad = function(num) {
+                        var s = "000000000" + num;
+                        return s.substr(s.length-4);
+                    }
+                    
+                    addToImagesArr(311);
+                    
+                });
+            })(jQuery);
+        </script>
+        <script type="text/javascript" src="js/buffer.min.js"></script>
+    </body>
+</html>
