@@ -1,0 +1,88 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="css/reset.css" />
+        <style type="text/css">
+            
+            body {
+                background-color: black;
+            }
+            
+            #wrap {
+                width: 1024px;
+                height: 768px;
+                margin: 0 auto;
+                padding-top: 100px;
+                text-align: center;
+                position: relative;
+            }
+            
+            h1 {
+                color: white;
+                margin-top: -10px;
+            }
+            
+            .shot {
+                width:371px;
+                height:504px;
+                z-index: 10;
+                position: absolute;
+                top: 100px;
+                left: 327px;
+            }
+            
+            .video {
+                width:1280px;
+                height:720px;
+                opacity: 0;
+                position: absolute;
+                top: -100px;
+                left: -128px;
+                z-index: 5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrap">
+            <h1>Click me!!!</h1>
+            <img class="shot" src="img/shot.png" />
+            <video class="video" width="1280" height="720" preload="auto">
+                <source src="video/movie.mp4" type="video/mp4">
+                <source src="video/movie.ogv" type="video/ogv">
+                <source src="video/movie.webm" type="video/webm">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    // 
+                    $('.shot').on('click', function(evt) {
+                        // play video and hide the img
+                        $(this).css({
+                            display: 'none'
+                        });
+                        
+                        var video = $('.video')[0];
+                        
+                        video.currentTime = 0.5;
+                        
+                        video.play();
+                        
+                        $('.video').css({
+                            opacity: 1
+                        });
+                    });
+                });
+            })(jQuery);
+        </script>
+        <style type="text/css">#fake-like-rapper{display: inline-block;margin:0;padding:0;}#fake-like-rapper div{float:left;margin:0;padding:0;}#like-fake div.connect_widget_button_count_including, td.connect_widget_simple_including{margin:0;padding:0;}#like-fake td, td.label{font-size: 11px;text-align: left;margin:0;padding:0;}#like-fake{font-size: 11px;font-family:"lucida grande",tahoma,verdana,arial,sans-serif;color:#333;line-height:1.28;text-align: left;direction: ltr;margin-top: 1px !important; margin-left: -2px!important;position: relative;float:left;}#like-fake .uiGrid{border: 0;border-collapse: collapse;border-spacing: 0;}#like-fake .connect_widget_button_count_count{background: white;border: 1px solid #D1D1D1;float: left;font-weight: normal;height: 14px;margin-left: 1px;min-width: 17px;padding: 1px 2px 1px 2px;text-align: center;line-height: 14px;white-space: nowrap;}#like-fake .connect_widget_button_count_nub s, #like-fake .connect_widget_button_count_nub i{border: solid transparent;border-right-color: #D7D7D7;top: 1px;display: block;position: relative;border-width: 4px 5px 4px 0;}#like-fake .connect_widget_button_count_nub i{left: 2px;top: -7px;border-right-color: white;}#like-fake .connect_widget_button_count_nub {float: left; position: relative; height: 0; width: 5px; top: -5px; left: 2px; }</style><div id="fake-like-rapper"><div class="fb-like" data-href="http://work.goodbysilverstein.com/byrdout" data-send="false" data-layout="button_count" data-width="48" data-show-faces="false" data-font="arial" style="width: 48px; height: 20px; overflow: hidden;"></div><div id="like-fake"><div class="connect_widget_button_count_including"><table class="uiGrid" cellspacing="0" cellpadding="0"><tbody><tr><td><div class="thumbs_up hidden_elem"></div></td><td><div class="undo hidden_elem"></div></td></tr><tr><td><div class="connect_widget_button_count_nub"><s></s><i></i></div></td><td><div class="connect_widget_button_count_count">1.4m</div></td></tr></tbody></table></div></div></div>
+    </body>
+</html>

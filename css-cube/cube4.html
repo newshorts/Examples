@@ -1,0 +1,106 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>cube</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style>
+            #wrap {
+                width: 1024px;
+                height: 768px;
+                margin: 0 auto;            
+            }
+            
+            .container {
+                width: 200px;
+                height: 200px;
+                position: relative;
+                -webkit-perspective: 1000px;
+                -webkit-perspective-origin: 60% 50%;
+            }
+            
+            .cube {
+                width: 196px;
+                height: 196px;
+                -webkit-transform-style: preserve-3d;
+            }
+            
+            .cube figure {
+                width: 196px;
+                height: 196px;
+                position: absolute;
+                display: block;
+                border: 2px solid black;
+                opacity: 0.4;
+            }
+            
+            .front {
+                -webkit-transform: 
+                    rotateX(0deg)    
+                    translateZ(100px)
+                ;
+                background-color: #3ac;
+            }
+            
+            .back {
+                -webkit-transform: 
+                    rotateX(180deg)    
+                    translateZ(100px)
+                ;
+                background-color:#ad3
+            }
+            
+            .right {
+                -webkit-transform: 
+                    rotateY(90deg)    
+                    translateZ(100px)
+                ;
+                background-color:#c33;
+            }
+            
+            .left {
+                -webkit-transform: 
+                    rotateY(-90deg)    
+                    translateZ(100px)
+                ;
+                background-color:blueviolet;
+            }
+            
+            .top {
+                -webkit-transform: 
+                    rotateX(90deg)    
+                    translateZ(100px)
+                ;
+                background-color:magenta;
+            }
+            
+            .bottom {
+                -webkit-transform: 
+                    rotateX(-90deg)    
+                    translateZ(100px)
+                ;
+                background-color:yellowgreen;
+            }
+            
+            
+            
+        </style>
+    </head>
+    <body>
+        <div id="wrap">
+            <div class="container">
+                <div class="cube">
+                    <figure class="front"></figure>
+                    <figure class="back"></figure>
+                    <figure class="right"></figure>
+                    <figure class="left"></figure>
+                    <figure class="top"></figure>
+                    <figure class="bottom"></figure>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
