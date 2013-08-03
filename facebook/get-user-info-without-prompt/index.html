@@ -1,0 +1,40 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>This is a problem</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div id="wrap">
+            <p>Getting tracking data from the Facebook tracking cookie.</p>
+        </div>
+        <div id="fb-root"></div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script>
+
+            // window loaded
+            window.fbAsyncInit = function() {
+                FB.init({
+                  appId      : '122659701266591',
+                  status     : true,
+                  xfbml      : true
+                });
+                console.dir(FB);
+            };
+
+            // Load the SDK asynchronously
+            (function(d, s, id){
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/all.js";
+                fjs.parentNode.insertBefore(js, fjs);
+             }(document, 'script', 'facebook-jssdk'));
+
+        </script>
+    </body>
+</html>

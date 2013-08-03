@@ -1,0 +1,36 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    var hashtag = 'stuff';
+                    var promotionalMessages = [
+                        "Get ready for the boldest gigs at SXSW: put your phone on top of Doritos #" + hashtag + " and push play http://youtu.be/MHtaGC832po",
+                        "This replay contains pool parties, pyrotechnics and tesla coils. Ready?  http://bit.ly/13HtBj5 #" + hashtag + " #SXSW2013",
+                        "Awesome,  you like 62-foot vending machines and pyro. Here's a little more where that came from http://bit.ly/13HtBj5 #" + hashtag + " #SXSW2013",
+                        "Hey @handle, thanks for asking. Here's what went down at #" + hashtag + ", the most interactive stage at #SXSW2013 http://bit.ly/13HtBj5",
+                        "So you wanted highlights. How about 62-foot hight and pyro? http://bit.ly/13HtBj5 #" + hashtag + " #SXSW2013",
+                        "OK, here's what happened when 14,000 tweets controlled a 62-foot vending machine http://bit.ly/13HtBj5 #" + hashtag + " #SXSW2013",
+                        "Yup, a 62-foot, functional vending machine powered by fans'  tweets. Enjoy. http://bit.ly/13HtBj5 #" + hashtag + " #SXSW2013",
+                        "How bold did the fans make it? You'll be the judge of that http://bit.ly/13HtBj5 #" + hashtag + " #SXSW2013"
+                    ];
+
+                    var rand = Math.floor(Math.random()*promotionalMessages.length);
+                    
+                    console.log('rand: ' + rand)
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <div>TODO write content</div>
+    </body>
+</html>
