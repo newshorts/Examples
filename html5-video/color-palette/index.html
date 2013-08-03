@@ -1,0 +1,163 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Web Video Logo</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="js/jsmanipulate.js"></script>
+        <script src="js/mustache.js"></script>
+        <script src="js/color-thief.js"></script>
+        <script>
+            // shim layer with setTimeout fallback
+            window.requestAnimFrame = (function(){
+            return  window.requestAnimationFrame       || 
+                    window.webkitRequestAnimationFrame || 
+                    window.mozRequestAnimationFrame    || 
+                    window.oRequestAnimationFrame      || 
+                    window.msRequestAnimationFrame     || 
+                    function(/* function */ callback, /* DOMElement */ element){
+                      window.setTimeout(callback, 1000 / 60);
+                    };
+          })();
+            
+            function frameConverter(video,canvas) {
+
+                // Set up our frame converter
+                this.video = video;
+                this.viewport = canvas.getContext("2d");
+                this.width = canvas.width;
+                this.height = canvas.height;
+                // color palettes
+                this.palettes = new Array();
+                this.palettes[0] = $('.palette0');
+                this.palettes[1] = $('.palette1');
+                this.palettes[2] = $('.palette2');
+                this.palettes[3] = $('.palette3');
+                // Create the frame-buffer canvas
+                this.framebuffer = document.createElement("canvas");
+                this.framebuffer.width = this.width;
+                this.framebuffer.height = this.height;
+                this.ctx = this.framebuffer.getContext("2d");
+                // Default video effect is blur
+                this.effect = JSManipulate.blur;
+                // user imageFilterLibrary or a custom image filter
+                this.useImageFilterLibrary = false;
+                // set color thief
+                this.colorThief = new ColorThief();
+                // image
+                this.image = document.getElementById('image');
+                // This variable used to pass ourself to event call-backs
+                var self = this;
+                // Start rendering when the video is playing
+                this.video.addEventListener("play", function() {
+                    render();
+                }, false);
+
+                // Change the image effect to be applied  
+                this.setEffect = function(effect){
+                    if(effect in JSManipulate){
+                        this.effect = JSManipulate[effect];
+                    }
+                }
+
+                // Rendering call-back
+//                this.render = function() {
+//                    if (this.video.paused || this.video.ended) {
+//                        return;
+//                    }
+//                    this.renderFrame();
+//                    var self = this;
+//                    
+//                    // Render every 10 ms
+//                    setTimeout(function () {
+//                        self.render();
+//                    }, 10);
+//                };
+                
+                function render() {
+                    if (this.video.paused || this.video.ended) {
+                        return;
+                    }
+                    
+                    window.webkitRequestAnimationFrame(render);
+                    self.renderFrame();
+                }
+
+                // Compute and display the next frame 
+                this.renderFrame = function() {
+                    
+                    if(this.useImageFilterLibrary) {
+                        // Acquire a video frame from the video element
+                        this.ctx.drawImage(this.video, 0, 0, this.video.videoWidth,
+                                this.video.videoHeight,0,0,this.width, this.height);
+                        var data = this.ctx.getImageData(0, 0, this.width, this.height);
+                        // Apply image effect
+                        this.effect.filter(data,this.effect.defaultValues);
+                        // Render to viewport
+                        this.viewport.putImageData(data, 0, 0);
+                        return;
+                    }
+                    
+                    if(!this.useImageFilterLibrary) {
+                        
+                        var palette = this.colorThief.getPalette(this.video, 4);
+                        for(var i = 0; i < palette.length; i++) {
+                            this.palettes[i].css({
+                                'background-color': 'rgb('+palette[i][0]+', '+palette[i][1]+', '+palette[i][2]+')'
+                            });
+                        }
+                        
+                        
+                        return palette;
+                    }
+                    
+                };
+                
+            };
+
+
+            (function($) {
+                $(window).load(function() {
+                    // Initialization code
+                    video = document.getElementById("video");
+                    canvas = document.getElementById("canvas");
+                    fc = new frameConverter(video,canvas);
+                    // Change the image effect applied to the video
+                    fc.setEffect('emboss');
+                    fc.useImageFilterLibrary = false;
+                });
+            })(jQuery);
+                
+        </script>
+        <style>
+            
+            span {
+                display: inline-block;
+                width: 100px;
+                height: 35px;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <div id="wrap">
+            <video id="video" poster="images/buck.jpeg" controls>
+                <source src="video/buck.webm" type='video/webm; codecs="vp8.0, vorbis"'/>
+                <source src="video/buck.ogv" type='video/ogv; codecs="theora, vorbis"'/>
+                <source src="video/buck.mp4" type='video/mp4; codecs="avc1.4D401E, mp4a.40.2"'/>
+                <p>This is fallback content</p>
+            </video>
+            <canvas id="canvas"></canvas>
+            <div class="logo">
+                <span class="palette0"></span>
+                <span class="palette1"></span>
+                <span class="palette2"></span>
+                <span class="palette3"></span>
+            </div>
+        </div>
+    </body>
+</html>
