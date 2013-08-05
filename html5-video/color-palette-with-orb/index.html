@@ -1,0 +1,70 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+    </head>
+    <body>
+        <div id="wrap">
+            
+            <!-- video -->
+            <video id="video" poster="images/buck.jpeg" controls>
+                <source src="videos/buck.webm" type='video/webm; codecs="vp8.0, vorbis"'/>
+                <source src="videos/buck.ogv" type='video/ogv; codecs="theora, vorbis"'/>
+                <source src="videos/buck.mp4" type='video/mp4; codecs="avc1.4D401E, mp4a.40.2"'/>
+                <p>This is fallback content</p>
+            </video>
+            <canvas id="canvas"></canvas>
+            <div class="logo">
+                <span class="palette0"></span>
+                <span class="palette1"></span>
+                <span class="palette2"></span>
+                <span class="palette3"></span>
+            </div>
+            
+            <div id="logoContainer">
+                <!-- logo -->
+                <div id="controls"></div>
+                <div id="logo"></div>
+
+                <!-- overlay -->
+                <img id="overlay" src="images/logo.png" />
+            </div>
+            
+                
+        </div>
+        <script type="text/javascript">
+            var RGB1 = 120,
+                RGB2 = 120,
+                RGB3 = 120;
+            
+        </script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+        <script src="https://rawgithub.com/soulwire/sketch.js/master/js/sketch.min.js"></script>
+        <script src="http://s.codepen.io/assets/libs/empty.js"></script>
+        <script type="text/javascript" src="js/orbital.js"></script>
+        <script type="text/javascript" src="js/jsmanipulate.js"></script>
+        <script type="text/javascript" src="js/mustache.js"></script>
+        <script type="text/javascript" src="js/color-thief.js"></script>
+        <script type="text/javascript" src="js/frameConverter.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    // Initialization code
+                    video = document.getElementById("video");
+                    canvas = document.getElementById("canvas");
+                    fc = new frameConverter(video,canvas);
+                    // Change the image effect applied to the video
+                    fc.setEffect('emboss');
+                    fc.useImageFilterLibrary = false;
+                });
+            })(jQuery);
+        </script>
+    </body>
+</html>

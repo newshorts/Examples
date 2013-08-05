@@ -1,0 +1,14 @@
+body {
+  background: #111 url(../images/classy_fabric.png);
+}
+
+canvas {  
+  background: radial-gradient(rgba(0, 0, 0, .45), rgba(0, 0, 0, 1));
+  display: block; 
+}
+
+#wrap {
+  left: 0;
+  position: fixed;
+  top: 0;
+}

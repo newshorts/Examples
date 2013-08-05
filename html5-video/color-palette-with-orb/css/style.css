@@ -1,0 +1,49 @@
+body {
+  background: #111 url(../images/classy_fabric.png);
+}
+
+canvas {  
+  background: radial-gradient(rgba(0, 0, 0, .45), rgba(0, 0, 0, 1));
+  display: block; 
+}
+
+#wrap {
+  left: 0;
+  /*position: fixed;*/
+  top: 0;
+}
+
+#video {
+    float: left;
+    width: 1076px;
+}
+
+#logoContainer {
+    position:relative;
+    width: 300px;
+    float: right;
+}
+
+#overlay {
+    width: 300px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#logo {
+    width: 300px;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#controls {
+    display: none;
+}
+
+span {
+    display: inline-block;
+    width: 100px;
+    height: 35px;
+}
