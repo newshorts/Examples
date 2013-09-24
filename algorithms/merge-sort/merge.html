@@ -1,0 +1,50 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div>
+            <h1>Example Merge</h1>
+            <p> This example merges two arrays, it's not quite a merge sort yet because they don't sort anything. It just merges two sorted arrays which is the start to the merge-sort algorithm.</p>
+        </div>
+        <script>
+            (function($) {
+                
+                // the requirement is that these input arrays are already sorted
+                var _left = [3, 5, 7, 8, 9],
+                    _right = [1, 2, 4, 6, 10];
+                
+                function merge(left, right) {
+                    var result = new Array(),
+                        il = 0,
+                        ir = 0;
+                
+                    while(il < left.length && ir < right.length) {
+                        if(left[il] < right[ir]) {
+                            result.push(left[il]);
+                            il++;
+                        } else {
+                            result.push(right[ir]);
+                            ir++
+                        }
+                    }
+                    
+                    return result;
+                }
+                
+                function load() {
+                    var output = merge(_left, _right);
+                    console.log(output);
+                }
+                
+                $.onload = load;
+            })(window);
+        </script>
+    </body>
+</html>

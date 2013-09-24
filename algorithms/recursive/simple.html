@@ -1,0 +1,40 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div>
+            <h1>recursive numbers</h1>
+            <p class="noquery">This examples recurses to just below 1 and stops.</p>
+        </div>
+        <script>
+            
+            // real
+            (function($) {
+                function load() {
+                    
+                    function recurse(n) {
+                        console.log(n);
+                        
+                        if(n <= 1) {
+                            return 1;
+                        }
+                        
+                        return n - recurse(n * .99);
+                    }
+                    
+                    recurse(5);
+                    
+                }
+                
+                $.onload = load;
+            })(window);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,63 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div>
+            <h1>Merge Sort</h1>
+            <p>This is an example of a recursive merge sort.</p>
+        </div>
+        <script>
+            (function($) {
+                function load() {
+                    
+                    var _items = [1,4,5,6,3,4,5,4,5,6,7,8,2,3,4,5,6,4,5,6,7,8,9];
+                   
+                    function merge(left, right) {
+                        var result = [],
+                            il = 0,
+                            ir = 0;
+                    
+                        while(il < left.length && ir < right.length) {
+                            
+                            if(left[il] < right[ir]) {
+                                result.push(left[il++]);
+                            } else {
+                                result.push(right[ir++]);
+                            }
+                        }
+                        
+                        return result.concat(left.slice(il).concat(right.slice(ir)));
+                        
+                    }
+                    
+                    function mergeSort(items) {
+                        
+                        if(items.length < 2) {
+                            // a single item is not worth sorting
+                            return items;
+                        }
+                        
+                        var middle = Math.floor(items.length / 2);
+                        
+                        var left = items.slice(0, middle),
+                            right = items.slice(middle);
+                    
+                        return merge(mergeSort(left), mergeSort(right));
+                    }
+                    
+                    console.log(mergeSort(_items));
+                    
+                }
+                
+                $.onload = load;
+            })(window);
+        </script>
+    </body>
+</html>

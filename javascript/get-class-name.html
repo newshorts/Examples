@@ -1,0 +1,41 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div>
+            <h1>Get Class Name</h1>
+            <p class="noquery">Without using jquery.</p>
+        </div>
+        <script>
+            (function($) {
+                function load() {
+                    
+                    function findClassName(className) {
+                        var elems = document.getElementsByTagName('*'),
+                            i;
+                            
+                        for(i in elems) {
+                            if((elems[i].className).indexOf(className) > -1) {
+                                return elems[i];
+                            }
+                        }
+                    }
+                    
+                    var elem = findClassName('noquery');
+                    
+                    console.log(elem);
+                    
+                }
+                
+                $.onload = load;
+            })(window);
+        </script>
+    </body>
+</html>

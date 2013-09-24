@@ -1,0 +1,87 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div>
+            <h1>Merge Sort</h1>
+            <p>This is an example of a recursive merge sort.</p>
+        </div>
+        <script>
+            (function($) {
+                function load() {
+                    
+                    var _items = new Array();
+                    
+                    var timestamp1 = Date.now();
+                    console.log('generating array ' + timestamp1)
+                    
+                    for(var i = 0; i < 2000000; i++) {
+                        _items.push(Math.floor((Math.random()*10) + 1))
+                    }
+                    
+                    var timestamp2 = Date.now();
+                    console.log('sorting ' + timestamp2)
+                    
+                    function unique(items) {
+                        var idx = 0;
+                        while(idx < items.length) {
+                            if(items[idx] === items[idx + 1]) {
+                                items.splice(idx, 1);
+                            }
+                            idx++;
+                        }
+                        return items;
+                    }
+                
+                    function merge(left, right) {
+                        var result = [],
+                            il = 0,
+                            ir = 0;
+                    
+                        while(il < left.length && ir < right.length) {
+                            
+                            if(left[il] < right[ir]) {
+                                result.push(left[il++]);
+                            } else {
+                                result.push(right[ir++]);
+                            }
+                        }
+                        
+                        return result.concat(left.slice(il).concat(right.slice(ir)));
+                        
+                    }
+                    
+                    function mergeSort(items) {
+                        
+                        if(items.length < 2) {
+                            // a single item is not worth sorting
+                            return items;
+                        }
+                        
+                        var middle = Math.floor(items.length / 2);
+                        
+                        var left = items.slice(0, middle),
+                            right = items.slice(middle);
+                    
+                        return unique(merge(mergeSort(left), mergeSort(right)));
+                    }
+                    
+                    console.log(mergeSort(_items));
+                    
+                    var timestamp3 = Date.now();
+                    console.log('merged in ' + ((timestamp3 - timestamp2) / 1000) + ' seconds')
+                    
+                }
+                
+                $.onload = load;
+            })(window);
+        </script>
+    </body>
+</html>
