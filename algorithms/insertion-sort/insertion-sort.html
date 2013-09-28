@@ -15,26 +15,24 @@ and open the template in the editor.
                 function load() {
                     
                     var cards = new Array(5,2,4,6,1,3);
-                    
                     // loop the whole thing
                     for(var j = 0; j < cards.length; j++) {
-                        console.log('break')
-                        // store the value of the card in question
+                        // store our current value
                         var key = cards[j];
-                        // set the index of the card before this
+                        // set an index for the previous item
                         var i = j - 1;
-                        // while the index is not the first card and key of the card before the current one is larger than the current key
+                        // while we are >= the first item and the previous value is larger than the current value
                         while(i >= 0 && cards[i] > key) {
-                            // set the current card = the larger card
-                            cards[i + 1] = cards[i];
+                            // set the current value = to the previous value
+                            cards[i+1] = cards[i];
                             // decrement the index
                             i = i - 1;
-                            console.log(cards)
                         }
-                        // set the current card back to the stored key
-                        cards[i + 1] = key;   
-                        console.log(cards);
+                        // finally set the current value to the current index + 1
+                        cards[i+1] = key;
                     }
+                    
+                    console.log(cards);
                 }
                 
                 $.onload = load;
