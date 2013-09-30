@@ -1,0 +1,60 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style>
+            #container {
+                width: 960px;
+                margin: 0 auto;
+            }
+
+            article {
+                margin: 5px;
+                background-color: #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <section>
+                <article class="box1"></article>
+                <article class="box2"></article>
+                <article class="box3"></article>
+                <article class="box4"></article>
+            </section>
+        </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    var h = $(window).height();
+                    var _h = h * 0.2;
+
+                    $('article').each(function(idx) {
+                        $(this).css({
+                            'width': _h,
+                            'height': _h
+                        });
+                    });
+                });
+                
+                $(window).resize(function() {
+                    var h = $(window).height();
+                    var _h = h * 0.2;
+
+                    $('article').each(function(idx) {
+                        $(this).css({
+                            'width': _h,
+                            'height': _h
+                        });
+                    });
+                });
+            })(jQuery);
+        </script>
+    </body>
+</html>
