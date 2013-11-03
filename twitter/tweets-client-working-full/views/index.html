@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>{{msg}}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body>
+        <div class="wrap">
+            <h1>{{msg}}</h1>
+            <ul class="tweets"></ul>
+        </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            (function($, io) {
+                $(window).load(function() {
+                    var socket = io.connect('http://localhost.com:5050/');
+                    var tweets = $('.tweets');
+            
+                    socket.on('tweet', function (data) {
+                        console.log(data);
+                        tweets.append('<li>' + data + '</li>');
+                    });
+
+                    socket.on('error', function (data) {
+                        alert(data);
+                    });
+
+                    socket.on('end', function (data) {
+                        alert(data);
+                    });
+
+                    socket.on('destroy', function (data) {
+                        alert(data);
+                    });
+                });
+            })(jQuery, io);
+            
+        </script>
+    </body>
+</html>

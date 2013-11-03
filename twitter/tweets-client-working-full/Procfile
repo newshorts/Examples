@@ -1,0 +1,3 @@
+# facebook is included in web.js
+web: node web.js
+twitter: node twitterWorker.js

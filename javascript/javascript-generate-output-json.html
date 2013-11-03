@@ -1,0 +1,47 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div>TODO write content</div>
+        <a href="">Download</a>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    
+                    /**
+                     * Gets a text file and parses it to output json, more than
+                     * anything, we just want to output the data uri so the example text file is not even included
+                     */
+                    
+                    // get the text or data
+                    $.get('/misc/path.txt', function(data) {
+                        // make an array to hold the data
+                        var coords = new Array();
+                        // split the data out by line
+                        var rows = data.split("\n");
+                        for(var i = 0, l = rows.length; i < l; i++) {
+                            var xy = rows[i].split(",");
+                            coords.push(xy);
+                        }
+                        console.log(coords)
+                        
+                        // stringify the json and escape the quotes
+                        var str = JSON.stringify(coords).replace(/\"/g,'\"');
+                        console.log(str)
+                        // put in a data uri to output the download link
+                        var output = 'data:attachment/json,' + str;
+                        $('a').attr('href', output);
+                    });
+                });
+            })(jQuery);
+        </script>
+    </body>
+</html>
