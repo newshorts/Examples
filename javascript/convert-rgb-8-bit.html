@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .output {
+                width: 50px;
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <img id="scream" src="images/256colour.png" alt="The Scream" width="256" height="64">
+            <canvas id="myCanvas" width="256" height="64" style="border:1px solid #d3d3d3;"></canvas>
+            <input class="test" type="text" name="test" value="" placeholder="r,g,b" />
+            <button class="testButton">Test</button>
+            <code class="output"></code>
+        </div>
+    </body>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        (function($) {
+            $(window).load(function() {
+                
+                var colorUrl = 'http://upload.wikimedia.org/wikipedia/commons/9/93/256colour.png';
+                
+                var imgData = drawImage();
+                
+                var pixels = getPixels(imgData);
+                
+                $('.testButton').on('click', function(evt) {
+                    var val = $('.test').val();
+                    testColor(pixels, val);
+                    var ordered = testAllColors(pixels);
+                    console.log(ordered);
+                    appendOutput(ordered);
+                });
+                
+                function testAllColors(arr) {
+                    var ord = new Array(1);
+                    var index;
+                    for(var i = 0; i < arr.length; i++) {
+                        index = rgbTo256(arr[i].split(','));
+                        ord[index] = arr[i];
+                        //console.log('Color at: ' + i + ' had the 8Bit value: ' + index + ' for rgb value: ' + arr[i]);
+                    }
+                    return ord;
+                }
+                
+                function testColor(arr, str) {
+                    var index = rgbTo256(str.split(','))
+                    for(var i = 0; i < arr.length; i++) {
+                        if(arr[i] == str) {
+                            console.log('we have a match at i: ' + i + ' in: ' + arr[i] + ' which should match the index: ' + index);
+                        }
+                    }
+                }
+                
+                function appendOutput(arr) {
+                    $('.output').text('[');
+                    for(var i = 0; i < arr.length; i++) {
+                        var endl = (i != arr.length - 1) ? ',\r\n' : '';
+                        $('.output').append('"' + arr[i] + '"' + endl);
+                    }
+                    $('.output').append(']');
+                }
+                
+                
+                function getPixels(d) {
+                    
+                    var arr = new Array();
+                    for(var x = 0; x < d.width; x++) {
+                        for(var y = 0; y < d.height; y++) {
+                            
+                            var off = (y * d.width + x) * 4;
+
+                            var r = d.data[off];
+                            var g = d.data[off + 1];
+                            var b = d.data[off + 2];
+                            var str = r + ',' + g + ',' + b;
+                            
+                            if(isUnique(arr, str)) {
+                                arr.push(str);
+                            }
+                            
+                        }
+                    }
+                    
+                    return arr;
+                }
+                
+                function isUnique(arr, str) {
+                    for (var i = 0; i < arr.length; i++) {
+                        if(str == arr[i]) {
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                
+                function drawImage() {
+                    var c=document.getElementById("myCanvas");
+                    var ctx=c.getContext("2d");
+                    var img=document.getElementById("scream");
+                    ctx.drawImage(img,0,0);
+                    return ctx.getImageData(0,0,256,64);
+                }
+                
+                function generateColors() {
+                    var out = new Array();
+                    for(var r = 0; r < 255; r++) {
+                        for(var g = 0; g < 255; g++) {
+                            for(var b = 0; b < 255; b++) {
+                                out[rgbTo256([r,g,b])] = r + ',' + g + ',' + b;
+                            }
+                        }
+                    }
+                    return out;
+                }
+                
+                function rgbTo256(arr) {
+                    var r = arr[0];
+                    var g = arr[1];
+                    var b = arr[2];
+                    return ((arr[2]&255 & 0xC0)+((arr[1]&255 & 0xE0) >> 2)+((arr[0] & 0xE0) >> 5))&0xFF;
+//                    return ((r&0x0ff)<<16)|((g&0x0ff)<<8)|(b&0x0ff);
+//                    return (r&0xE0) | ((g)&0x18) | ((b)&0x07);
+                }
+            });
+        })(jQuery);
+    </script>
+</html>

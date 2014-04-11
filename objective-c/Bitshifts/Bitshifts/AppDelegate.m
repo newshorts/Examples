@@ -14,9 +14,9 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    int r = 220;
-    int g = 40;
-    int b = 150;
+    int r = 255;
+    int g = 255;
+    int b = 255;
     
     // simple example
     int val = 255;
@@ -50,10 +50,14 @@
     int color = (r*6/256)*36 + (g*6/256)*6 + (b*6/256);
     NSLog(@"color: %i", color);
     
-    //
+    //my own color shift
+    int kolor = ((b&255 & 0xC0)+((g&255 & 0xE0) >> 2)+((r & 0xE0) >> 5))&0xFF;
+    NSLog(@"kolor: %i", kolor);
+    
     
     
 
 }
+
 
 @end

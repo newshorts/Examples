@@ -287,6 +287,7 @@ and open the template in the editor.
                 
                     
                 var rgb = new Array();
+                var rgbRaw = new Array();
                 
                 for(var i = 0; i < hex.length; i++) {
                     var r = hexToR(hex[i]);
@@ -294,11 +295,26 @@ and open the template in the editor.
                     var b = hexToB(hex[i]);
                     
                     rgb.push(r + ',' + g + ',' + b);
+                    rgbRaw.push([r,g,b]);
                 }
                 
                 console.log(rgb);
                 
                 $('.code').text(JSON.stringify(rgb));
+                
+                var arr256 = new Array(256);
+                for(var x = 0; x < rgbRaw.length; x++) {
+                    var tmp = rgbTo256(rgbRaw[x])
+                    arr256[tmp] = rgbRaw[x];
+                }
+                
+                var finalArr = new Array(256);
+                for(var y in arr256) {
+                    finalArr[y] = arr256[y].join();
+                }
+                console.log('final array output is ' + finalArr.length + ' long');
+                console.log(finalArr);
+                
                 
                 // cut any "#" then take a substring and parse the int
                 // the "16" at the end specifies hexadecimal (base-16) value
@@ -306,6 +322,18 @@ and open the template in the editor.
                 function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
                 function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
                 function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
+                
+                function rgbTo256(arr) {
+                    var r = arr[0];
+                    var g = arr[1];
+                    var b = arr[2];
+//                    return ((arr[2]&255 & 0xC0)+((arr[1]&255 & 0xE0) >> 2)+((arr[0] & 0xE0) >> 5))&0xFF;
+//                    return ((r&0x0ff)<<16)|((g&0x0ff)<<8)|(b&0x0ff);
+//                    return new Color(r,g,b).getRGB();
+                    return (r&0xE0) | ((g)&0x18) | ((b)&0x07);
+                    
+
+                }
              });
          })(jQuery);
      </script>
