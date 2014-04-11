@@ -101,11 +101,14 @@ and open the template in the editor.
                         ord[index] = arr[i];
                     }
                     
+                    var output = new Array();
                     for(var h = 0; h < ord.length; h++) {
                         console.log('ord['+h+']=' + arr[h]);
+                        output.push(arr[h])
                     }
+                    console.log(output.length)
                     
-                    return ord;
+                    return output;
                 }
                 
                 function testColor(arr, str) {
