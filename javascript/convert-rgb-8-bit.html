@@ -193,7 +193,7 @@ and open the template in the editor.
                     var r = arr[0];
                     var g = arr[1];
                     var b = arr[2];
-                    return ((arr[2]&255 & 0xC0)+((arr[1]&255 & 0xE0) >> 2)+((arr[0] & 0xE0) >> 5))&0xFF;
+                    return ((b&255 & 0xC0)+((g&255 & 0xE0) >> 2)+((r & 0xE0) >> 5))&0xFF;
 //                    return ((r&0x0ff)<<16)|((g&0x0ff)<<8)|(b&0x0ff);
 //                    return (r&0xE0) | ((g)&0x18) | ((b)&0x07);
                 }
