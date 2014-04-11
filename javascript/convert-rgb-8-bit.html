@@ -14,6 +14,29 @@ and open the template in the editor.
                 width: 50px;
                 display: block;
             }
+            
+            .colorCompare {
+                position: relative;
+                display: block;
+                width: 200px;
+                height: 200px;
+            }
+            
+            .colorInMatrix {
+                width: 100px;
+                height: 100px;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            
+            .testColor {
+                width: 100px;
+                height: 100px;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+            }
         </style>
     </head>
     <body>
@@ -22,6 +45,10 @@ and open the template in the editor.
             <canvas id="myCanvas" width="256" height="64" style="border:1px solid #d3d3d3;"></canvas>
             <input class="test" type="text" name="test" value="" placeholder="r,g,b" />
             <button class="testButton">Test</button>
+            <div class="colorCompare">
+                <div class="colorInMatrix"></div>
+                <div class="testColor"></div>
+            </div>
             <code class="output"></code>
         </div>
     </body>
@@ -30,38 +57,71 @@ and open the template in the editor.
         (function($) {
             $(window).load(function() {
                 
-                var colorUrl = 'http://upload.wikimedia.org/wikipedia/commons/9/93/256colour.png';
-                
                 var imgData = drawImage();
                 
                 var pixels = getPixels(imgData);
                 
+                var ordered = orderColors(pixels);
+                
+                appendOutput(ordered);
+                
                 $('.testButton').on('click', function(evt) {
                     var val = $('.test').val();
-                    testColor(pixels, val);
-                    var ordered = testAllColors(pixels);
-                    console.log(ordered);
-                    appendOutput(ordered);
+                    var result = testColor(ordered, val);
+                    console.log('rgb('+result.converted+')')
+                    $('.testColor').css({
+                        "background-color": 'rgb('+result.original+')'
+                    });
+                    $('.colorInMatrix').css({
+                        "background-color": 'rgb('+result.converted+')'
+                    });
                 });
                 
-                function testAllColors(arr) {
+                function batchTestColors(arr) {
+                    var b = 0;
+                    for(var r = 0; r < 255; r++) {
+                        for(var g = 0; g < 255; g++) {
+                            var index = rgbTo256([r,g,b]);
+                            for(var i = 0; i < arr.length; i++) {
+                                if(arr[index] == str) {
+                                    console.log('we have a match at i: ' + i + ' in: ' + arr[i] + ' which should match the index: ' + index);
+                                    return;
+                                }
+                            }
+                            console.log('unable to translate your color');
+                        }
+                    }
+                }
+                
+                function orderColors(arr) {
                     var ord = new Array(1);
                     var index;
                     for(var i = 0; i < arr.length; i++) {
                         index = rgbTo256(arr[i].split(','));
                         ord[index] = arr[i];
-                        //console.log('Color at: ' + i + ' had the 8Bit value: ' + index + ' for rgb value: ' + arr[i]);
                     }
+                    
+                    for(var h = 0; h < ord.length; h++) {
+                        console.log('ord['+h+']=' + arr[h]);
+                    }
+                    
                     return ord;
                 }
                 
                 function testColor(arr, str) {
                     var index = rgbTo256(str.split(','))
+                    console.log('ord['+index+']='+arr[index]+' for str: ' + str)
+                    return {
+                        converted: arr[index],
+                        original: str
+                    };
                     for(var i = 0; i < arr.length; i++) {
-                        if(arr[i] == str) {
-                            console.log('we have a match at i: ' + i + ' in: ' + arr[i] + ' which should match the index: ' + index);
-                        }
+//                        if(arr[index] == str) {
+//                            console.log('we have a match at i: ' + i + ' in: ' + arr[i] + ' which should match the index: ' + index);
+//                            return;
+//                        }
                     }
+//                    console.log('unable to translate your color');
                 }
                 
                 function appendOutput(arr) {
