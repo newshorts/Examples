@@ -14,9 +14,9 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    int r = 255;
-    int g = 24;
-    int b = 127;
+    int r = 220;
+    int g = 40;
+    int b = 150;
     
     // simple example
     int val = 255;
@@ -39,14 +39,20 @@
     // too large, would need 32 bit int to send
     int blueMask = 0xFF0000, greenMask = 0xFF00, redMask = 0xFF;
     int bgrValue = (b << 16) + (g << 8) + r;
+    NSLog(@"b: %i", b << 16);
+    NSLog(@"g: %i", g << 8);
     NSLog(@"bgrValue = %i", bgrValue);
     NSLog(@"blue: %i", ((bgrValue & blueMask) >> 16));
     NSLog(@"red: %i", ((bgrValue & redMask)));
     NSLog(@"green: %i", ((bgrValue & greenMask) >> 8));
     
-    // color int
+    // color calculation
     int color = (r*6/256)*36 + (g*6/256)*6 + (b*6/256);
     NSLog(@"color: %i", color);
+    
+    //
+    
+    
 
 }
 
