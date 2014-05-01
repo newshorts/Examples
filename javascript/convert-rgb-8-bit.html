@@ -11,7 +11,7 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
             .output {
-                width: 50px;
+                width: 100px;
                 display: block;
             }
             
@@ -101,14 +101,14 @@ and open the template in the editor.
                         ord[index] = arr[i];
                     }
                     
-                    var output = new Array();
-                    for(var h = 0; h < ord.length; h++) {
-                        console.log('ord['+h+']=' + arr[h]);
-                        output.push(arr[h])
-                    }
-                    console.log(output.length)
+//                    var output = new Array();
+//                    for(var h = 0; h < ord.length; h++) {
+//                        console.log('ord['+h+']=' + arr[h]);
+//                        output.push(arr[h])
+//                    }
+//                    console.log(output.length)
                     
-                    return output;
+                    return ord;
                 }
                 
                 function testColor(arr, str) {
@@ -128,13 +128,30 @@ and open the template in the editor.
                 }
                 
                 function appendOutput(arr) {
-                    $('.output').text('[');
                     for(var i = 0; i < arr.length; i++) {
                         var endl = (i != arr.length - 1) ? ',\r\n' : '';
-                        $('.output').append('"' + arr[i] + '"' + endl);
+                        $('.output').append('color_'+i+ endl);
                     }
-                    $('.output').append(']');
                 }
+                
+                // for arduino output in progmem
+//                function appendOutput(arr) {
+//                    $('.output').text('[');
+//                    for(var i = 0; i < arr.length; i++) {
+//                        var endl = (i != arr.length - 1) ? '\r\n' : '';
+//                        $('.output').append('prog_char color_'+i+'[] PROGMEM = "' + arr[i] + '";' + endl);
+//                    }
+//                    $('.output').append(']');
+//                }
+                
+//                function appendOutput(arr) {
+//                    $('.output').text('[');
+//                    for(var i = 0; i < arr.length; i++) {
+//                        var endl = (i != arr.length - 1) ? ',\r\n' : '';
+//                        $('.output').append('"' + arr[i] + '"' + endl);
+//                    }
+//                    $('.output').append(']');
+//                }
                 
                 
                 function getPixels(d) {

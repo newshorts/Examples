@@ -54,7 +54,13 @@
     int kolor = ((b&255 & 0xC0)+((g&255 & 0xE0) >> 2)+((r & 0xE0) >> 5))&0xFF;
     NSLog(@"kolor: %i", kolor);
     
+    // string
+    char str[] = "255,15,67";
     
+    const char *p;
+    for (p = strtok(str, ","); p; p = strtok(NULL, ",")) {
+        NSLog(@"%s", p);
+    }
     
 
 }
