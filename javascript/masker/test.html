@@ -10,11 +10,37 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="reset.css" />
+        <style>
+            .page {
+                position: relative;
+                width: 100%;
+                margin: 0 auto;
+            }
+            
+            .container {
+                position: relative;
+                top: 0;
+                left: 0;
+            }
+            
+/*            .overlay {
+                position: absolute;
+                margin-top: 50%;
+                top: -480px;
+                margin-left: 50%;
+                left: -360px;
+                width: 720px;
+                height: 960px;
+            }*/
+        </style>
     </head>
     <body>
-        <div class="container">
-            <!--<canvas class="in"></canvas>-->
+        <div class="page">
+            <div class="container">
+                <!--<canvas class="in"></canvas>-->
+            </div>
         </div>
+        <!--<img class="overlay" src="overlay@2x.png" />-->
         <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
         <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
@@ -50,8 +76,11 @@ and open the template in the editor.
                         constrain.setAttribute("id", "constrain");
                         $(constrain).width(2 * (original.width - settings.outputWidth) + settings.outputWidth);
                         $(constrain).height(2 * (original.height - settings.outputHeight) + settings.outputHeight);
-                        container.append(constrain);
-                        $(constrain).offset({
+                        $(constrain).css({
+                            position: 'relative'
+                        });
+                        container.html(constrain);
+                        $(constrain).position({
                             top: (original.height - settings.outputHeight) * -1,
                             left: (original.width - settings.outputWidth) * -1
                         });
@@ -64,6 +93,8 @@ and open the template in the editor.
                         var offsetY = original.height - settings.outputHeight;
                         
                         render($(original).position().left, $(original).position().top, offsetX, offsetY);
+                        
+                        appendOverlay($(constrain));
                         
                     };
                     img.src = settings.imageUrl;
@@ -94,6 +125,29 @@ and open the template in the editor.
                         var imageData = originalCtx.getImageData(x, y, settings.outputWidth, settings.outputHeight);
                         outputCtx.putImageData(imageData, 0, 0);
                         callback.call(container, output.toDataURL(settings.type));
+                    }
+                    
+                    function appendOverlay(elem) {
+                        var overlay = new Image();
+                        overlay.setAttribute('class', 'overlay');
+//                        overlay.width = settings.outputWidth;
+//                        overlay.height = settings.outputHeight;
+                        $(overlay).css({
+                            position: 'absolute',
+//                            margin: '50% 0 0 50%',
+                            top: '50%',
+                            left: '50%',
+                            width: settings.outputWidth + 'px',
+                            height: settings.outputHeight + 'px',
+                            'margin-top': -1 * ((settings.outputHeight/2)) + 'px',
+                            'margin-left': -1 * ((settings.outputWidth/2)) + 'px',
+                            'pointer-events': 'none'
+                        });
+                        overlay.onload = function() {
+                            elem.append(overlay);
+                        }
+                        overlay.src = 'overlay@2x.png';
+                        
                     }
                 };
             })(jQuery);
