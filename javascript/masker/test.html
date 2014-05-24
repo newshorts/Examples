@@ -64,6 +64,14 @@ and open the template in the editor.
                         type: 'image/jpeg',
                     }, options );
                     
+                    var wRatio = settings.outputWidth / settings.previewWidth,
+                        hRatio = settings.outputHeight / settings.previewHeight,
+                        wScale,
+                        hScale,
+                        wUpper,
+                        hUpper;
+                    
+                    
                     var original = document.createElement('canvas'),
                         originalCtx = original.getContext('2d');
                 
@@ -72,15 +80,21 @@ and open the template in the editor.
                 
                     var img = new Image();
                     img.onload = function() {
-                        original.width = img.width;
-                        original.height = img.height;
-                        output.width = settings.previewWidth;
-                        output.height = settings.previewHeight;
+                        
+                        wScale = img.width/settings.outputWidth;
+                        hScale = img.height/settings.outputHeight;
+                        wUpper = settings.previewWidth * wScale;
+                        hUpper = settings.previewHeight * hScale;
+                        
+                        original.width = wUpper;
+                        original.height = hUpper;
+                        output.width = settings.outputWidth;
+                        output.height = settings.outputHeight;
                         
                         var constrain = document.createElement('div');
                         constrain.setAttribute("id", "constrain");
-                        $(constrain).width(2 * (original.width - settings.previewWidth) + settings.previewWidth);
-                        $(constrain).height(2 * (original.height - settings.previewHeight) + settings.previewHeight);
+                        $(constrain).width(2 * (wUpper - settings.previewWidth) + settings.previewWidth);
+                        $(constrain).height(2 * (hUpper - settings.previewHeight) + settings.previewHeight);
                         container.css({
                             overflow: 'hidden',
                             width: settings.previewWidth + 'px',
@@ -89,13 +103,13 @@ and open the template in the editor.
                         container.html(constrain);
                         $(constrain).css({
                             position: 'relative',
-                            top: -1 * (((original.height - settings.previewHeight) + settings.previewHeight) - settings.previewHeight) + 'px',
-                            left: -1 * (((original.width - settings.previewWidth) + settings.previewWidth) - settings.previewWidth) + 'px'
+                            top: -1 * (hUpper - settings.previewHeight) + 'px',
+                            left: -1 * (wUpper - settings.previewWidth) + 'px'
                         });
                         
                         $(constrain).append(original);
                         
-                        originalCtx.drawImage(img, 0, 0);
+                        originalCtx.drawImage(img, 0, 0, wUpper, hUpper);
                         
                         render($(original).position().left, $(original).position().top);
                         
@@ -116,18 +130,25 @@ and open the template in the editor.
                     
                     function render(_x, _y) {
                         
-                        var offsetX = original.width - settings.previewWidth;
-                        var offsetY = original.height - settings.previewHeight;
+                        // draw new canvas
+                        var canvas = document.createElement('canvas'),
+                            ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        
+                        var offsetX = wRatio * (original.width - settings.previewWidth);
+                        var offsetY = hRatio * (original.height - settings.previewHeight);
                         
                         console.log('x: ' + _x + ' y: ' + _y)
                         
-                        var x = -1 * (_x - offsetX),
-                            y = -1 * (_y - offsetY);
+                        var x = -1 * ((wRatio * _x) - offsetX),
+                            y = -1 * ((hRatio * _y) - offsetY);
                         
                         console.log('x: ' + x + ' y: ' + y)
                         
-                        originalCtx.translate(0, 0);
-                        var imageData = originalCtx.getImageData(x, y, settings.previewWidth, settings.previewHeight);
+                        ctx.translate(0, 0);
+                        var imageData = ctx.getImageData(x, y, settings.outputWidth, settings.outputHeight);
                         outputCtx.putImageData(imageData, 0, 0);
                         callback.call(container, output.toDataURL(settings.type));
                     }
