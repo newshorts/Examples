@@ -55,7 +55,7 @@ and open the template in the editor.
                         //defaults
                         outputWidth: 720,
                         outputHeight: 960,
-                        imageUrl: 'mike.jpg',
+                        imageUrl: 'mike.png',
                         type: 'image/jpeg',
                     }, options );
                     
@@ -76,13 +76,20 @@ and open the template in the editor.
                         constrain.setAttribute("id", "constrain");
                         $(constrain).width(2 * (original.width - settings.outputWidth) + settings.outputWidth);
                         $(constrain).height(2 * (original.height - settings.outputHeight) + settings.outputHeight);
-                        $(constrain).css({
-                            position: 'relative'
+                        container.css({
+                            overflow: 'hidden',
+                            width: settings.outputWidth + 'px',
+                            height: settings.outputHeight + 'px'
                         });
                         container.html(constrain);
-                        $(constrain).position({
-                            top: (original.height - settings.outputHeight) * -1,
-                            left: (original.width - settings.outputWidth) * -1
+//                        $(constrain).position({
+//                            top: (original.height - settings.outputHeight) * -1,
+//                            left: (original.width - settings.outputWidth) * -1
+//                        });
+                        $(constrain).css({
+                            position: 'relative',
+                            top: -1 * (((original.height - settings.outputHeight) + settings.outputHeight) - settings.outputHeight) + 'px',
+                            left: -1 * (((original.width - settings.outputWidth) + settings.outputWidth) - settings.outputWidth) + 'px'
                         });
                         
                         $(constrain).append(original);
@@ -156,11 +163,11 @@ and open the template in the editor.
             (function($) {
                 $(window).load(function() {
                     $('.container').masker({
-                        // nothing yet
+                        outputWidth: 360,
+                        outputHeight: 480
                     }, function(data) {
                         console.log(data)
                     });
-                    
                 });
             })(jQuery);
             
