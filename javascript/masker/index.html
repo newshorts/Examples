@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .overlay {
+                width: 200px;
+            }
+            
+            .backgroundImage {
+                width: 700px;
+                opacity: 0;
+            }
+        </style>
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <script>
+            (function($) {
+                $.fn.masker = function(options, callback) {
+                    
+                    var container = this;
+                    
+                    var settings = $.extend({
+                        //defaults
+                        draggableBackground: '.backgroundImage',
+                        snapShotButton: ''
+                    }, options );
+                    
+                    var _overlay = this.find('img'),
+                        overlayWidth = _overlay.width(),
+                        overlayHeight = _overlay.height(),
+                        overlayTop = _overlay.position().top,
+                        overlayLeft = _overlay.position().left;
+                
+                    var _background = $(settings.draggableBackground),
+                        backgroundWidth = _background.width(),
+                        backgroundHeight = _background.height();
+                
+                    var _canvas = this.find('canvas'),
+                        canvasWidth = backgroundWidth,
+                        canvasHeight = backgroundHeight,
+                        canvasTop = 0,
+                        canvasLeft = 0;
+                
+                    console.log(canvasWidth)
+                
+                    function init () {
+                        
+                        // make draggable
+                        _canvas.draggable({
+                            stop: handleDragged
+                        });
+                        
+                        // kinof
+                        setStyles();
+                        
+                        // draw canvas
+                        renderCanvas();
+                        
+                        // set events
+                        setEvents();                    
+                    }
+                    
+                    function setStyles() {
+                        container.css({
+                            position: 'relative',
+                            overflow: 'hidden',
+                            width: overlayWidth + 'px',
+                            height: overlayHeight + 'px'
+                        });
+                        
+                        // overlay
+                        _overlay.css({
+                            'pointer-events': 'none',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0
+                        });
+                        
+                        // canvas
+                        _canvas.css({
+                            width: canvasWidth + 'px',
+                            height: canvasHeight + 'px'
+                        });
+                        
+                    }
+                    
+                    function renderCanvas() {
+                        var canvas = _canvas[0],
+                            ctx = canvas.getContext('2d');
+                    
+                        ctx.drawImage(_background[0], 0, 0, canvasWidth, canvasHeight);
+                    }
+                    
+                    function setEvents() {
+                        $(settings.snapShotButton).on('click', function(evt) {
+                            evt.preventDefault();
+                            
+                            console.log(evt)
+                            
+                            // generate a mask
+                            var canvas = _canvas[0],
+                                ctx = canvas.getContext('2d'),
+                                x = canvasLeft,
+                                y = canvasTop;
+                                
+                            console.log('x' + x)
+                            console.log('y' + y)
+                            console.log('canvasLeft' + canvasLeft)
+                            console.log('canvasTop' + canvasTop)
+                            console.log('overlayWidth' + overlayWidth)
+                            console.log('overlayHeight' + overlayHeight)
+                                
+                            var data = ctx.getImageData(0, 0, 2000, 2000);
+                            
+                            var canvas2 = document.createElement('canvas'),
+                                ctx2 = canvas2.getContext('2d');
+                                
+                            canvas2.width = 200;
+                            canvas2.height = 200;
+                                
+                            ctx2.putImageData(data, 0, 0);
+                            
+                            console.log(canvas2.toDataURL('image/jpeg'));
+                        });
+                        
+                    }
+                    
+                    function handleDragged(ui, evt) {
+                        console.log(evt.position)
+                        canvasTop = evt.position.top;
+                        canvasLeft = evt.position.left;
+                        
+                        console.log(canvasLeft)
+                    }
+                    
+                    init();
+                };
+            })(jQuery);
+        </script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    $('.container').masker({
+                        draggableBackground: '.backgroundImage',
+                        snapShotButton: '.submit'
+                    }, function(data) {
+                        console.log(data)
+                    });
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <canvas class="canvas"></canvas>
+            <img class="overlay" src="overlay@2x.png" />
+        </div>
+        <button class="submit">Mask!</button>
+        <img class="backgroundImage" src="barn.jpg" />
+    </body>
+</html>

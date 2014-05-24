@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="reset.css" />
+    </head>
+    <body>
+        <div class="container">
+            <!--<canvas class="in"></canvas>-->
+        </div>
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <script>
+            (function($) {
+                $.fn.masker = function(options, _callback) {
+                    
+                    var container = this,
+                        callback = _callback;
+                    
+                    var settings = $.extend({
+                        //defaults
+                        outputWidth: 720,
+                        outputHeight: 960,
+                        imageUrl: 'mike.jpg',
+                        type: 'image/jpeg',
+                    }, options );
+                    
+                    var original = document.createElement('canvas'),
+                        originalCtx = original.getContext('2d');
+                
+                    var output = document.createElement('canvas'),
+                        outputCtx = output.getContext('2d');
+                
+                    var img = new Image();
+                    img.onload = function() {
+                        original.width = img.width;
+                        original.height = img.height;
+                        output.width = settings.outputWidth;
+                        output.height = settings.outputHeight;
+                        
+                        var constrain = document.createElement('div');
+                        constrain.setAttribute("id", "constrain");
+                        $(constrain).width(2 * (original.width - settings.outputWidth) + settings.outputWidth);
+                        $(constrain).height(2 * (original.height - settings.outputHeight) + settings.outputHeight);
+                        container.append(constrain);
+                        $(constrain).offset({
+                            top: (original.height - settings.outputHeight) * -1,
+                            left: (original.width - settings.outputWidth) * -1
+                        });
+                        
+                        $(constrain).append(original);
+                        
+                        originalCtx.drawImage(img, 0, 0);
+                        
+                        var offsetX = original.width - settings.outputWidth;
+                        var offsetY = original.height - settings.outputHeight;
+                        
+                        render($(original).position().left, $(original).position().top, offsetX, offsetY);
+                        
+                    };
+                    img.src = settings.imageUrl;
+                    
+                    $(original).draggable({
+                        containment: "#constrain", 
+                        scroll: false,
+                        stop: function(ui, evt) {
+                            console.log(evt)
+                            
+                            var offsetX = original.width - settings.outputWidth;
+                            var offsetY = original.height - settings.outputHeight;
+                            
+                            render(evt.position.left, evt.position.top, offsetX, offsetY);
+                        }
+                    });
+                    
+                    function render(_x, _y, offsetX, offsetY) {
+                        
+                        console.log('x: ' + _x + ' y: ' + _y)
+                        
+                        var x = -1 * (_x - offsetX),
+                            y = -1 * (_y - offsetY);
+                        
+                        console.log('x: ' + x + ' y: ' + y)
+                        
+                        originalCtx.translate(0, 0);
+                        var imageData = originalCtx.getImageData(x, y, settings.outputWidth, settings.outputHeight);
+                        outputCtx.putImageData(imageData, 0, 0);
+                        callback.call(container, output.toDataURL(settings.type));
+                    }
+                };
+            })(jQuery);
+        </script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    $('.container').masker({
+                        // nothing yet
+                    }, function(data) {
+                        console.log(data)
+                    });
+                    
+                });
+            })(jQuery);
+            
+//            $(window).load(function() {
+//                var _input = $('.in')[0],
+//                    itx = _input.getContext('2d');
+//
+//                var _output = $('.out')[0],
+//                    otx = _output.getContext('2d');
+//                    
+//                _output.width = 720;
+//                _output.height = 960;
+//
+//                var img = new Image();
+//                img.onload = function() {
+//                    _input.width = img.width;
+//                    _input.height = img.height;
+//                    itx.drawImage(img, 0, 0);
+//                    
+//                    var x = 50,
+//                        y = 50;
+//                    
+//                    var imageData = itx.getImageData(x, y, 720, 960);
+//                        otx.putImageData(imageData, 0, 0);
+//                };
+//                img.src = 'mike.jpg';
+//
+//                console.log(_input)
+//            });
+
+        </script>
+    </body>
+</html>
