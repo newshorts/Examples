@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .videoContainer {
+                position: relative;
+                width: 420px;
+                height: 346.5px;
+                overflow: hidden;
+            }
+            
+            .video {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 420px;
+                height: 231px;
+            }
+            
+            .canvas {
+                position: absolute;
+                top: 150px;
+                /*top: 231px;*/
+                left: 5px;
+                width: 410px;
+                height: 231px;
+                -webkit-transform: rotateY(0deg) rotateX(180deg);
+                -moz-transform: rotate3d(1, 1, 0, 180deg);
+                -ms-transform: rotate3d(1, 1, 0, 180deg);
+                -o-transform: rotate3d(1, 1, 0, 180deg);
+                transform: rotateY(0deg) rotateX(180deg);
+            }
+        </style>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    
+                    var width = 420,
+                        height = 231;
+                    var video = $('.video')[0];
+                    var canvas = $('.canvas')[0],
+                        ctx = canvas.getContext('2d');
+                        
+                    $(video).on('play', handlePlay);
+                    $(video).on('click', function(evt) {
+                        video.play();
+                        handlePlay(evt);
+                    });
+                    
+                    function handlePlay(evt) {
+                        if(video.paused || video.ended) return false;
+                        ctx.drawImage(video, 0, 0, width, height);
+                        console.log(evt)
+                        setTimeout(function() {
+                            handlePlay(evt)
+                        }, 20);
+                    }
+                    
+                    console.log(canvas)
+                    console.log(video)
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="videoContainer">
+                <video class="video" width="420" controls="controls">
+<!--                    <source src="http://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    <source src="http://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">-->
+                    <source src="videos/video.mp4" type="video/mp4">
+                    <source src="videos/video.ogg" type="video/ogg">
+                    Your browser does not support HTML5 video.
+                </video>
+                <canvas class="canvas" width="420"></canvas>
+            </div>
+        </div>
+    </body>
+</html>

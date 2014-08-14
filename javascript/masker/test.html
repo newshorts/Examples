@@ -26,7 +26,8 @@ and open the template in the editor.
                 left: 0;
             }
             
-/*            .overlay {
+            /*
+            .overlay {
                 position: absolute;
                 margin-top: 50%;
                 top: -480px;
@@ -34,7 +35,8 @@ and open the template in the editor.
                 left: -360px;
                 width: 720px;
                 height: 960px;
-            }*/
+            }
+            */
         </style>
     </head>
     <body>
@@ -47,56 +49,58 @@ and open the template in the editor.
         <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
         <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <script src="/GSP/clients/dali/Museum/"></script>
         <script>
             (function($) {
                 $.fn.masker = function(options, _callback) {
-                    
+
                     var container = this,
                         callback = _callback;
-                    
+                        
+                    // 
                     var settings = $.extend({
-                        //defaults
                         outputWidth: 720,
                         outputHeight: 960,
                         previewWidth: 720,
                         previewHeight: 960,
                         imageUrl: 'mike.png',
-                        type: 'image/jpeg',
+                        imageOverlay: 'overlay@2x.png',
+                        type: 'image/jpeg'
                     }, options );
-                    
+
                     var wRatio = settings.outputWidth / settings.previewWidth,
                         hRatio = settings.outputHeight / settings.previewHeight,
                         wScale,
                         hScale,
                         wUpper,
                         hUpper;
-                    
-                    
+
                     var original = document.createElement('canvas'),
                         originalCtx = original.getContext('2d');
-                
+
                     var output = document.createElement('canvas'),
                         outputCtx = output.getContext('2d');
-                
+
                     var img = new Image();
                     img.onload = function() {
-                        
+
                         wScale = img.width/settings.outputWidth;
                         hScale = img.height/settings.outputHeight;
                         wUpper = settings.previewWidth * wScale;
                         hUpper = settings.previewHeight * hScale;
-                        
+
                         original.width = wUpper;
                         original.height = hUpper;
                         output.width = settings.outputWidth;
                         output.height = settings.outputHeight;
-                        
+
                         var constrain = document.createElement('div');
                         constrain.setAttribute("id", "constrain");
                         $(constrain).width(2 * (wUpper - settings.previewWidth) + settings.previewWidth);
                         $(constrain).height(2 * (hUpper - settings.previewHeight) + settings.previewHeight);
                         container.css({
                             overflow: 'hidden',
+                            'text-align': 'left',
                             width: settings.previewWidth + 'px',
                             height: settings.previewHeight + 'px'
                         });
@@ -106,53 +110,53 @@ and open the template in the editor.
                             top: -1 * (hUpper - settings.previewHeight) + 'px',
                             left: -1 * (wUpper - settings.previewWidth) + 'px'
                         });
-                        
+
                         $(constrain).append(original);
-                        
+
                         originalCtx.drawImage(img, 0, 0, wUpper, hUpper);
-                        
+
                         render($(original).position().left, $(original).position().top);
-                        
+
                         appendOverlay($(constrain));
-                        
+
                     };
                     img.src = settings.imageUrl;
-                    
+
                     $(original).draggable({
-                        containment: "#constrain", 
+                        containment: "#constrain",
                         scroll: false,
                         stop: function(ui, evt) {
-                            console.log(evt)
-                            
+                            console.log(evt);
+
                             render(evt.position.left, evt.position.top);
                         }
                     });
-                    
+
                     function render(_x, _y) {
-                        
+
                         // draw new canvas
                         var canvas = document.createElement('canvas'),
                             ctx = canvas.getContext('2d');
                         canvas.width = img.width;
                         canvas.height = img.height;
                         ctx.drawImage(img, 0, 0);
-                        
+
                         var offsetX = wRatio * (original.width - settings.previewWidth);
                         var offsetY = hRatio * (original.height - settings.previewHeight);
-                        
+
                         console.log('x: ' + _x + ' y: ' + _y)
-                        
+
                         var x = -1 * ((wRatio * _x) - offsetX),
                             y = -1 * ((hRatio * _y) - offsetY);
-                        
+
                         console.log('x: ' + x + ' y: ' + y)
-                        
+
                         ctx.translate(0, 0);
                         var imageData = ctx.getImageData(x, y, settings.outputWidth, settings.outputHeight);
                         outputCtx.putImageData(imageData, 0, 0);
                         callback.call(container, output.toDataURL(settings.type));
                     }
-                    
+
                     function appendOverlay(elem) {
                         var overlay = new Image();
                         overlay.setAttribute('class', 'overlay');
@@ -169,8 +173,7 @@ and open the template in the editor.
                         overlay.onload = function() {
                             elem.append(overlay);
                         }
-                        overlay.src = 'overlay@2x.png';
-                        
+                        overlay.src = settings.imageOverlay;
                     }
                 };
             })(jQuery);
@@ -179,8 +182,8 @@ and open the template in the editor.
             (function($) {
                 $(window).load(function() {
                     $('.container').masker({
-                        previewWidth: 320,
-                        previewHeight: 427,
+                        previewWidth: 256,
+                        previewHeight: 342,
                         imageUrl: 'mike.jpg'
                     }, function(data) {
                         console.log(data)
