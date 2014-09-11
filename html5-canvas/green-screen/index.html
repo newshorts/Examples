@@ -17,10 +17,20 @@ and open the template in the editor.
             .container {
                 width: 320px;
                 background: #000 url("images/zombies1.jpg") scroll repeat;
+                position: relative;
+                z-index: 10;
             }
             
             .video {
                 display: none;
+                z-index: 10;
+            }
+            
+            .zombies {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: -1;
             }
         </style>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -138,6 +148,10 @@ and open the template in the editor.
     </head>
     <body>
         <div class="container">
+            <video class="zombies" width="320" autoplay="true" loop="true">
+                <source src="videos/zombies.mp4" type="video/mp4">
+                <source src="videos/zombies.webm" type="video/webm">
+            </video>
             <video class="video" width="320" height="240"></video>
             <canvas class="canvas" width="320" height="240"></canvas>
         </div>
