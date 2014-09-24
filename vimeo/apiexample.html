@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="//f.vimeocdn.com/js/froogaloop2.min.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    $(function() {
+                        var iframe = $('#player1')[0];
+                        var player = $f(iframe);
+
+                        // When the player is ready, add listeners for pause, finish, and playProgress
+                        player.addEvent('ready', function() {
+                            console.log('ready')
+
+                            player.addEvent('pause', onPause);
+                            player.addEvent('finish', onFinish);
+                            player.addEvent('playProgress', onPlayProgress);
+                        });
+
+                        // Call the API when a button is pressed
+                        $('button').bind('click', function() {
+                            player.api($(this).text().toLowerCase());
+                        });
+
+                        function onPause(id) {
+                            console.log(id)
+                        }
+
+                        function onFinish(id) {
+                            console.log(id)
+                        }
+
+                        function onPlayProgress(data, id) {
+                            console.log(data)
+                            console.log(id)
+                        }
+                    });
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <div>
+            <iframe id="player1" src="//player.vimeo.com/video/106839392?api=1&player_id=player1" width="500" height="213" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="http://vimeo.com/106839392">La Carnada</a> from <a href="http://vimeo.com/user2404074">Josh Soskin</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+        </div>
+    </body>
+</html>
