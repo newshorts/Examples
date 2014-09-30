@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                background-color: black;
+            }
+        </style>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <!--<script src="//ajax.googleapis.com/ajax/libs/threejs/r67/three.min.js"></script>-->
+        <script src="js/third-party/threejs/three.min.js"></script>
+        <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
+        <script src="js/third-party/threejs/OrbitControls.js"></script>
+        <script src="js/third-party/threejs/StereoEffect.js"></script>
+        
+        <script src="js/loaders/ColladaLoader.js"></script>
+        <script src="js/loaders/OBJLoader.js"></script>
+        
+        <script src="js/Cardboard.js"></script>
+        <script src="js/DetectScreenSize.js"></script>
+
+        <script src="js/shinysound/MoleculeShaders.js"></script>
+        <script src="js/shinysound/AudioTexture.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    
+                    var width = window.innerWidth;
+                    var height = window.innerHeight;
+                    
+                    var $container = $('#container');
+                    var cardboard;
+                    
+                    function init() {
+                        // setup
+                        cardboard = new Cardboard();
+                        THREE.Object3D.call(this);
+                        this.cameraRig = new THREE.Object3D();
+                        this.cameraRig.add(cardboard.camera);
+                        cardboard.scene.add(this.cameraRig);
+                        
+                        // add city
+                        var pointLight = makePointLight();
+                        loadModel(cardboard.scene);
+                        cardboard.scene.add(pointLight);
+                        
+                        cardboard.controls.object = this.cameraRig;
+                        cardboard.controls.object.rotation.reorder('YXZ');
+                        cardboard.effect.separation = 11;
+                        cardboard.update = function() {
+                            Cardboard.prototype.update.call(this);
+                        };
+                        document.body.appendChild(cardboard.renderer.domElement);
+                        
+                    }
+                    
+                    function makePointLight(color, x, y, z) {
+                        
+                        color = color || 0xFFFFFe;
+                        x = x || 10;
+                        y = y || 50;
+                        z = z || -130;
+                        
+                        // lights
+                        var pointLight = new THREE.PointLight(0xFFFFFe, 1, 1000);
+                        pointLight.position.x = x;
+                        pointLight.position.y = y;
+                        pointLight.position.z = z;
+                        return pointLight;
+                    }
+                    
+                    function loadModel(_scene) {
+                        var dae;
+                        var loader = new THREE.ColladaLoader();
+                        loader.options.convertUpAxis = true;
+                        loader.load('models/city.dae', function(collada) {
+                            dae = collada.scene;
+                            
+                            // clone so we can fuck with it
+                            var clone = new THREE.Mesh(
+                                dae.children[0].children[0].geometry, 
+                                new THREE.MeshPhongMaterial({
+                                    color: 0xFFFFFF
+                                })
+                            );
+                    
+                            // scale
+                            clone.scale.x = clone.scale.y = clone.scale.z = 0.25;
+                            clone.position.y = -700;
+                            
+                            _scene.add(clone);
+                        });
+                    }
+                    
+                    init();
+                        
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <div id="container"></div>
+    </body>
+</html>
