@@ -33,14 +33,41 @@ and open the template in the editor.
             (function($) {
                 $(window).load(function() {
                     
+                    console.log(window)
+                    
                     var width = window.innerWidth;
                     var height = window.innerHeight;
                     
                     var $container = $('#container');
-                    var cardboard;
+                    var renderer,
+                        scene,
+                        camera,
+                        controls,
+                        clock,
+                        effect,
+                        cardboard;
+                    
                     
                     function init() {
                         // setup
+//                        renderer = new THREE.WebGLRenderer();
+//                        renderer.setSize(width, height);
+//                        renderer.setClearColor(0x000000, 1);
+//                        $container.append(renderer.domElement);
+//                        
+//                        camera = makeCamera();
+//                        controls = makeControls();
+//                        
+//                        effect = new THREE.StereoEffect(renderer);
+//                        effect.setSize(width, height);
+//                        
+//                        
+//                        
+//                        scene = new THREE.Scene();
+//                        
+//                        // make stuff
+//                        clock = new THREE.Clock();
+
                         cardboard = new Cardboard();
                         THREE.Object3D.call(this);
                         this.cameraRig = new THREE.Object3D();
@@ -48,10 +75,14 @@ and open the template in the editor.
                         cardboard.scene.add(this.cameraRig);
                         
                         // add city
+//                        var sphere = makeSphere();
                         var pointLight = makePointLight();
+//                        makeFog();
                         loadModel(cardboard.scene);
+//                        cardboard.scene.add(sphere);
                         cardboard.scene.add(pointLight);
                         
+//                        cardboard.camera.position.z = 10;
                         cardboard.controls.object = this.cameraRig;
                         cardboard.controls.object.rotation.reorder('YXZ');
                         cardboard.effect.separation = 11;
@@ -60,6 +91,93 @@ and open the template in the editor.
                         };
                         document.body.appendChild(cardboard.renderer.domElement);
                         
+                        
+                        
+                        
+                        
+                        
+                        // add controls
+                        
+
+                        // add stuff
+                        
+                        
+//                        $(window).on('resize', function(evt) {
+//                            camera.aspect = window.innerWidth / window.innerHeight;
+//                            camera.updateProjectionMatrix();
+//                            renderer.setSize(window.innerWidth, window.innerHeight);
+//                            
+//                        });
+                        
+                        
+                        //draw
+//                        animate();
+                        
+                    }
+                    
+                    function makeCamera() {
+                        var viewAngle = 60,
+                            aspect = width / height,
+//                            aspect = 1
+                            near = 1,
+                            far = 10000;
+                
+                        var _camera = new THREE.PerspectiveCamera(
+                            viewAngle,
+                            aspect,
+                            near,
+                            far
+                        );
+                        _camera.position.x = 0;
+                        _camera.position.y = 0;
+                        _camera.position.z = 0.001;
+                        _camera.rotation.x -= 45 * (Math.PI / 2);
+                        
+                        return _camera;
+                    }
+                    
+                    function makeOrthographicCamera() {
+                        var _camera = new THREE.OrthographicCamera(
+                            window.innerWidth / -2,
+                            window.innerWidth / 2,
+                            window.innerHeight / 2,
+                            window.innerHeight / -2,
+                            0.1,
+                            10000
+                        );
+                
+                        _camera.position.y = 100;
+                        _camera.rotation.x -= 45 * (Math.PI / 180);
+                        
+                        return _camera;
+                    }
+                    
+                    function makeFog() {
+                        cardboard.scene.fog = new THREE.FogExp2( 0x000000, 0.001 );
+                    }
+                    
+                    function makeSphere() {
+                        // mesh
+                        var radius = 50,
+                            segments = 16,
+                            rings = 16;
+                    
+                        var _sphere = new THREE.Mesh(
+                            // geometry
+                            new THREE.SphereGeometry(
+                                radius,
+                                segments,
+                                rings
+                            ),
+                            // material
+                            new THREE.MeshLambertMaterial({
+                                color: 0xCC0000
+                            })
+                        );
+                
+                        _sphere.position.y = -500;
+                
+                        return _sphere;
                     }
                     
                     function makePointLight(color, x, y, z) {
@@ -99,6 +217,71 @@ and open the template in the editor.
                             _scene.add(clone);
                         });
                     }
+                    
+                    function makeControls() {
+//                        controls = new THREE.DeviceOrientationControls( camera );
+//                        controls.connect();
+                        
+                        controls = new THREE.OrbitControls( camera );
+                        controls.damping = 0.2;
+                        controls.addEventListener( 'change', render );
+                        
+                    }
+                    
+                    // Rotate an object around an arbitrary axis in object space
+                    var rotObjectMatrix;
+                    function rotateAroundObjectAxis(object, axis, radians) {
+                        rotObjectMatrix = new THREE.Matrix4();
+                        rotObjectMatrix.makeRotationAxis(axis.normalize(), radians);
+
+                        // old code for Three.JS pre r54:
+                        // object.matrix.multiplySelf(rotObjectMatrix);      // post-multiply
+                        // new code for Three.JS r55+:
+                        object.matrix.multiply(rotObjectMatrix);
+
+                        // old code for Three.js pre r49:
+                        // object.rotation.getRotationFromMatrix(object.matrix, object.scale);
+                        // old code for Three.js r50-r58:
+                        // object.rotation.setEulerFromRotationMatrix(object.matrix);
+                        // new code for Three.js r59+:
+                        object.rotation.setFromRotationMatrix(object.matrix);
+                    }
+
+                    var rotWorldMatrix;
+                    // Rotate an object around an arbitrary axis in world space       
+                    function rotateAroundWorldAxis(object, axis, radians) {
+                        rotWorldMatrix = new THREE.Matrix4();
+                        rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
+
+                        // old code for Three.JS pre r54:
+                        //  rotWorldMatrix.multiply(object.matrix);
+                        // new code for Three.JS r55+:
+                        rotWorldMatrix.multiply(object.matrix);                // pre-multiply
+
+                        object.matrix = rotWorldMatrix;
+
+                        // old code for Three.js pre r49:
+                        // object.rotation.getRotationFromMatrix(object.matrix, object.scale);
+                        // old code for Three.js pre r59:
+                        // object.rotation.setEulerFromRotationMatrix(object.matrix);
+                        // code for r59+:
+                        object.rotation.setFromRotationMatrix(object.matrix);
+                    }
+                    
+                    function animate() {
+                        requestAnimationFrame(animate);
+                        render();
+                    }
+                    
+                    function render() {
+                        if(controls) {
+                            controls.update();
+                        }
+//                        renderer.render(scene, camera);
+                        effect.render(scene, camera);
+                    }
+                    
+                    
                     
                     init();
                         
