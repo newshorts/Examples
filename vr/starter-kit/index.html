@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>octopus</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    body {
+      margin: 0px;
+      background-color: #000;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+
+  <script src="js/third-party/threejs/three.min.js"></script>
+  <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
+  <script src="js/third-party/threejs/OrbitControls.js"></script>
+  <script src="js/third-party/threejs/StereoEffect.js"></script>
+
+  <script src="js/loaders/ColladaLoader.js"></script>
+  <script src="js/loaders/OBJLoader.js"></script>
+
+  <script src="js/Cardboard.js"></script>
+  <script src="js/DetectScreenSize.js"></script>
+
+  <script src="js/shinysound/MoleculeShaders.js"></script>
+  <script src="js/shinysound/AudioTexture.js"></script>
+
+  <script>
+
+   var dae,dae2
+
+  function ShinySound() {
+
+    THREE.Object3D.call(this);
+
+    // Camera Rig
+
+    this.cameraRig = new THREE.Object3D();
+    this.cameraRig.add(cardboard.camera);
+    cardboard.scene.add(this.cameraRig);
+
+    // skyBox
+
+    var skyBoxTexture = THREE.ImageUtils.loadTextureCube([
+      'textures/skybox_grey/skybox_px.jpg', // x-axis
+      'textures/skybox_grey/skybox_nx.jpg',
+      'textures/skybox_grey/skybox_py.jpg', // y-axis
+      'textures/skybox_grey/skybox_ny.jpg',
+      'textures/skybox_grey/skybox_pz.jpg', // z-axis
+      'textures/skybox_grey/skybox_nz.jpg'
+   ]);
+
+    var loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+        loader.load( 'octopusshoe.dae', function colladaReady( collada ) {
+
+          dae = collada.scene;
+
+          dae.scale.x = dae.scale.y = dae.scale.z = 3;
+          dae.children[2].children[0].material = new THREE.MeshLambertMaterial( { color:  0xf1341a, ambient: 0xf1341a})
+
+          cardboard.scene.add(dae)
+
+        } );
+
+    var loader2 = new THREE.ColladaLoader();
+        loader2.options.convertUpAxis = true;
+        loader2.load( 'asics-lowpoly.dae', function colladaReady( collada ) {
+
+         dae2 = collada.scene;
+
+          var material2 = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            shininess: 40,
+            map: THREE.ImageUtils.loadTexture('map.jpg')
+          });
+          dae2.children[2].children[0].material=material2;
+
+          for (var i = 0; i < 20; i++) {
+            var mesh = new THREE.Mesh( dae2.children[2].children[0].geometry, material2 );
+            mesh.scale.x = mesh.scale.y = mesh.scale.z = 3;
+            
+            mesh.position.set((Math.random()-.5)*10,(Math.random()-.5)*10,(Math.random()-.5)*10)
+
+            mesh.rotation.set(10*Math.random(),10*Math.random(),10*Math.random())
+            cardboard.scene.add(mesh)
+          };
+
+        } );
+
+      var skyBoxShader = THREE.ShaderLib['cube'];
+      skyBoxShader.uniforms['tCube'].value = skyBoxTexture;
+
+      var skyBoxMaterial = new THREE.ShaderMaterial({
+        fragmentShader: skyBoxShader.fragmentShader,
+        vertexShader: skyBoxShader.vertexShader,
+        uniforms: skyBoxShader.uniforms,
+        depthWrite: false,
+        side: THREE.BackSide
+      });
+
+      var skyBox = new THREE.Mesh(
+        new THREE.BoxGeometry(20, 20, 20),
+        skyBoxMaterial
+     );
+
+    cardboard.scene.add(skyBox);
+
+    var ambientLight = new THREE.AmbientLight(0x333333);
+
+    var keyLight = new THREE.DirectionalLight(0xffffff, 0.1);
+    keyLight.position.set(5, 10, 10);
+
+    var fillLight = new THREE.DirectionalLight(0xffffff, 0.1);
+    fillLight.position.set(-10, -22, 10);
+
+    var backLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    backLight.position.set(5, -5, -9);
+
+    this.cameraRig.add(keyLight);
+    this.cameraRig.add(fillLight);
+    this.cameraRig.add(backLight);
+    this.cameraRig.add(ambientLight);
+
+    cardboard.camera.position.z = 2.0;
+
+    cardboard.controls.object = this.cameraRig;
+    cardboard.controls.object.rotation.reorder('YXZ');
+  }
+
+    var scope = this;
+    var time;
+    var beatTime, beatCount, beatEnvelope, doubleBeatTime, doubleBeatCount, doubleBeatEnvelope, hornTime, hornEnvelope;
+    var bands, v_length, b_length;
+
+
+  var cardboard, shinySound;
+
+
+  window.addEventListener('load', function() {
+    cardboard = new Cardboard();
+    shinySound = new ShinySound();
+
+  cardboard.effect.separation = 0.06;
+
+    cardboard.update = function() {
+
+      Cardboard.prototype.update.call(this);
+
+    };
+
+    document.body.appendChild(cardboard.renderer.domElement);
+  });
+  </script>
+
+</body>
+</html>

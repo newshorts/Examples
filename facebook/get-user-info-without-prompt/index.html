@@ -1,6 +1,5 @@
 <!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
+    The general conclusion is that, no you can't collect any user information.
 -->
 <!DOCTYPE html>
 <html>
@@ -23,7 +22,28 @@ and open the template in the editor.
                   status     : true,
                   xfbml      : true
                 });
-                console.dir(FB);
+//                console.dir(FB);
+                
+                FB.getLoginStatus(function(response) {
+                    getMe();
+                    if (response.status === 'connected') {
+                        console.log('Logged in.');
+                    } else {
+                        FB.login(function (resp) {
+                            console.log(resp)
+                            
+                            getMe();
+                        });
+                    }
+                    
+                });
+                
+                function getMe() {
+                    FB.api('/me', function(data) {
+                        console.log('me: ')
+                        console.log(data)
+                    });
+                }
             };
 
             // Load the SDK asynchronously
