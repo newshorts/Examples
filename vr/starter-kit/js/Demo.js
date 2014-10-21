@@ -34,7 +34,7 @@ var Demo = function(c) {
         var ambientLight = new THREE.AmbientLight(0x333333);
         cameraRig.add(ambientLight);
 
-        _cardboard.camera.position.z = 2.0;
+        _cardboard.camera.position.z = 0.01;
         _cardboard.controls.object = cameraRig;
         _cardboard.controls.object.rotation.reorder('YXZ');
     };
@@ -149,9 +149,12 @@ var Demo = function(c) {
         complete();
     };
     
-    this.initWithBoxAndLighting = function() {
+    this.initWithBoxAndLighting = function(model) {
+        var model = model || false;
         makeRig();
-        loadDemoModel();
+        if(model) {
+            loadDemoModel();
+        }
         addSkyBox();
         addExtraLighting();
         complete();
@@ -190,7 +193,7 @@ var Demo = function(c) {
             dae.scale.x = scale.x;
             dae.scale.y = scale.y;
             dae.scale.z = scale.z;
-            dae.children[2].children[0].material = new THREE.MeshLambertMaterial( { color:  color, ambient: 0xf1341a})
+//            dae.children[2].children[0].material = new THREE.MeshLambertMaterial( { color:  color, ambient: 0xf1341a})
             _cardboard.scene.add(dae)
         });
     }

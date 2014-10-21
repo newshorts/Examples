@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Starter Kit</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+          margin: 0px;
+          background-color: #000;
+          overflow: hidden;
+      }
+    </style>
+</head>
+<body>
+
+    <script src="js/third-party/threejs/three.min.js"></script>
+    <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
+    <script src="js/third-party/threejs/OrbitControls.js"></script>
+    <script src="js/third-party/threejs/StereoEffect.js"></script>
+
+    <script src="js/loaders/ColladaLoader.js"></script>
+    <script src="js/loaders/OBJLoader.js"></script>
+
+    <script src="js/Cardboard.js"></script>
+    <script src="js/Demo.js"></script>
+    <script src="js/DetectScreenSize.js"></script>
+
+    <script src="js/shinysound/MoleculeShaders.js"></script>
+    <script src="js/shinysound/AudioTexture.js"></script>
+
+    <script>
+
+        var cardboard, demo;
+
+        window.addEventListener('load', function() {
+            cardboard = new Cardboard();
+            cardboard.effect.separation = 0.06;
+
+            demo = new Demo(cardboard);
+            demo.initWithBoxAndLighting(false);
+            demo.loadModel('infiniti.dae', 0xf1341a, {x: 3, y: 3, z: 3});
+
+            cardboard.update = function() {
+                Cardboard.prototype.update.call(this);
+            };
+
+            document.body.appendChild(cardboard.renderer.domElement);
+        });
+    </script>
+
+</body>
+</html>

@@ -38,8 +38,8 @@
             cardboard.effect.separation = 0.06;
 
             demo = new Demo(cardboard);
-            demo.init(cardboard);
-            demo.loadModel('asics-lowpoly.dae', 0xf1341a, {x: 3, y: 3, z: 3});
+            demo.initWithBoxAndLighting(false);
+            demo.loadModel('infiniti.dae', 0xf1341a, {x: 3, y: 3, z: 3});
 
             cardboard.update = function() {
                 Cardboard.prototype.update.call(this);
