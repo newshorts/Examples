@@ -31,17 +31,50 @@
 
     <script>
 
-        var cardboard, demo;
+        var cardboard, demo, light2;
 
         window.addEventListener('load', function() {
             cardboard = new Cardboard();
             cardboard.effect.separation = 0.06;
 
             demo = new Demo(cardboard);
-            demo.initWithBoxAndLighting(false);
-            demo.loadModel('infiniti.dae', 0xf1341a, {x: 3, y: 3, z: 3});
+            demo.init();
+            demo.loadModel('gt500.dae', 0xf1341a, {x: 3, y: 3, z: 3});
+            demo.addCustomSphere('textures/sonic/stall-invert6.jpg');
+//            demo.addCustomBox('textures/patrick/patrick_%%.jpg');
+            
+            var cameraRig = demo.getCameraRig();
+            
+            var light = new THREE.SpotLight(0xffffff, 1, 15);
+            light.position.set( -0.4, 2.9, 3.60 );
+            light.castShadow = true;
+            cameraRig.add(light);
+            
+            light2 = new THREE.SpotLight(0xfbb754, 1, 150);
+            light2.position.set( 20, -8, -9 );
+            light2.castShadow = true;
+            cameraRig.add(light2);
+            
+//            var light = new THREE.PointLight(0xffffff, 1, 15);
+//            light.position.set( 0.50, 0.50, 0.50 );
+//            cameraRig.add(light);
+//            
+//            var light2 = new THREE.PointLight(0xffffff, 1, 15);
+//            light2.position.set( 0.50, 0.50, 0.50 );
+//            cameraRig.add(light2);
 
             cardboard.update = function() {
+//                console.log('stuff')
+                var time = Date.now() * 0.0005;
+                
+//                light.position.x = Math.cos(time * 0.7) * 3;
+//                light.position.y = Math.sin(time * 0.6) * 4;
+//                light.position.z = Math.cos(time * 0.3) * 3;
+//                
+//                light2.position.x = Math.sin(time * 0.7) * 3;
+//                light2.position.y = Math.cos(time * 0.6) * 4;
+//                light2.position.z = Math.cos(time * 0.3) * 3;
+                
                 Cardboard.prototype.update.call(this);
             };
 

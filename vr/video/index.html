@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Starter Kit</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+          margin: 0px;
+          background-color: #000;
+          overflow: hidden;
+      }
+    </style>
+</head>
+<body>
+
+    <script src="js/third-party/threejs/three.min.js"></script>
+    <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
+    <script src="js/third-party/threejs/OrbitControls.js"></script>
+    <script src="js/third-party/threejs/StereoEffect.js"></script>
+
+    <script src="js/loaders/ColladaLoader.js"></script>
+    <script src="js/loaders/OBJLoader.js"></script>
+
+    <script src="js/Cardboard.js"></script>
+    <script src="js/Demo.js"></script>
+    <script src="js/DetectScreenSize.js"></script>
+
+    <script src="js/shinysound/MoleculeShaders.js"></script>
+    <script src="js/shinysound/AudioTexture.js"></script>
+
+    <script>
+
+        var cardboard, demo, light2, video, videoImageContext, videoTexture;
+
+        window.addEventListener('load', function() {
+            cardboard = new Cardboard();
+            cardboard.effect.separation = 0.06;
+
+            demo = new Demo(cardboard);
+            demo.init();
+            
+//            demo.loadModel('gt500.dae', 0xf1341a, {x: 3, y: 3, z: 3});
+//            demo.addCustomSphere('textures/sonic/stall-invert6.jpg');
+//            demo.addCustomBox('textures/patrick/patrick_%%.jpg');
+            
+            var cameraRig = demo.getCameraRig();
+            
+            var light = new THREE.SpotLight(0xffffff, 1, 15);
+            light.position.set( -0.4, 2.9, 3.60 );
+            light.castShadow = true;
+            cameraRig.add(light);
+            
+            // create the video element
+            var _v = demo.addCustomVideoSphere('videos/pano-site.mp4', 640, 320);
+            video = _v.video;
+            videoImageContext = _v.videoImageContext;
+            videoTexture = _v.videoTexture;
+            
+//            light2 = new THREE.SpotLight(0xfbb754, 1, 150);
+//            light2.position.set( 20, -8, -9 );
+//            light2.castShadow = true;
+//            cameraRig.add(light2);
+            
+//            var light = new THREE.PointLight(0xffffff, 1, 15);
+//            light.position.set( 0.50, 0.50, 0.50 );
+//            cameraRig.add(light);
+//            
+//            var light2 = new THREE.PointLight(0xffffff, 1, 15);
+//            light2.position.set( 0.50, 0.50, 0.50 );
+//            cameraRig.add(light2);
+
+            cardboard.update = function() {
+//                console.log('stuff')
+                var time = Date.now() * 0.0005;
+                
+                if ( video.readyState === video.HAVE_ENOUGH_DATA )  {
+                    videoImageContext.drawImage( video, 0, 0 );
+                    if ( videoTexture ) {
+                        videoTexture.needsUpdate = true;
+                    }
+                }
+                
+//                light.position.x = Math.cos(time * 0.7) * 3;
+//                light.position.y = Math.sin(time * 0.6) * 4;
+//                light.position.z = Math.cos(time * 0.3) * 3;
+//                
+//                light2.position.x = Math.sin(time * 0.7) * 3;
+//                light2.position.y = Math.cos(time * 0.6) * 4;
+//                light2.position.z = Math.cos(time * 0.3) * 3;
+                
+                Cardboard.prototype.update.call(this);
+            };
+
+            document.body.appendChild(cardboard.renderer.domElement);
+        });
+    </script>
+
+</body>
+</html>

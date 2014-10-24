@@ -9,6 +9,7 @@ var Demo = function(c) {
     
     // public
 //    this.cameraRig;
+    this.dae;
     
     // private
     var _cardboard = c || new Cardboard(),
@@ -51,6 +52,7 @@ var Demo = function(c) {
             dae.scale.x = dae.scale.y = dae.scale.z = 3;
             dae.children[2].children[0].material = new THREE.MeshLambertMaterial( { color:  0xf1341a, ambient: 0xf1341a})
             _cardboard.scene.add(dae)
+            self.dae = dae;
         });
     };
     
@@ -83,6 +85,8 @@ var Demo = function(c) {
                 mesh.rotation.set(10*Math.random(),10*Math.random(),10*Math.random())
                 _cardboard.scene.add(mesh)
             };
+            
+            self.dae = dae2;
 
         } );
     };
@@ -125,6 +129,7 @@ var Demo = function(c) {
      * @returns {undefined}
      */
     var addExtraLighting = function() {
+        
         var keyLight = new THREE.DirectionalLight(0xffffff, 0.1);
         keyLight.position.set(5, 10, 10);
         var fillLight = new THREE.DirectionalLight(0xffffff, 0.1);
@@ -195,7 +200,74 @@ var Demo = function(c) {
             dae.scale.z = scale.z;
 //            dae.children[2].children[0].material = new THREE.MeshLambertMaterial( { color:  color, ambient: 0xf1341a})
             _cardboard.scene.add(dae)
+            self.dae = dae;
+            var texture = THREE.ImageUtils.loadTexture('textures/gt500/Interior.jpg');
+            dae.children[0].children[0].material = new THREE.MeshLambertMaterial({map:texture});
         });
+        
+    }
+    
+    /**
+     * 
+     * @returns {undefined}
+     */
+    this.addCustomBox = function(path) {
+        
+        var path = path || 'textures/skybox_grey/skybox_%%.jpg';
+        
+        var skyBoxTexture = THREE.ImageUtils.loadTextureCube([
+            path.replace('%%', 'px'),
+            path.replace('%%', 'nx'),
+            path.replace('%%', 'py'),
+            path.replace('%%', 'ny'),
+            path.replace('%%', 'pz'),
+            path.replace('%%', 'nz')
+        ]);
+        
+        var skyBoxShader = THREE.ShaderLib['cube'];
+        skyBoxShader.uniforms['tCube'].value = skyBoxTexture;
+
+        var skyBoxMaterial = new THREE.ShaderMaterial({
+            fragmentShader: skyBoxShader.fragmentShader,
+            vertexShader: skyBoxShader.vertexShader,
+            uniforms: skyBoxShader.uniforms,
+            depthWrite: false,
+            side: THREE.BackSide
+        });
+
+        var skyBox = new THREE.Mesh(
+            new THREE.BoxGeometry(20, 20, 20),
+            skyBoxMaterial
+        );
+
+        _cardboard.scene.add(skyBox);
+    };
+    
+    /**
+     * Add
+     * @returns {undefined}
+     */
+    this.addCustomSphere = function(path) {
+        var geometry = new THREE.SphereGeometry( 50, 32, 32 );
+        var texture = new THREE.ImageUtils.loadTexture(path);
+        var material = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: texture
+        });
+        
+        // make it doublesided so we can see it from the inside
+        material.side = THREE.DoubleSide;
+        var world = new THREE.Mesh(geometry, material);
+        world.rotation.y = 4;
+        
+        _cardboard.scene.add( world );
+    };
+    
+    this.getCameraRig = function() {
+        return cameraRig;
     }
     
 };
+
+
+    
