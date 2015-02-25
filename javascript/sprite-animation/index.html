@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!--
+Example sprite sheet animation with custom Javascript using jQuery to grab elements
+-->
+<html>
+    <head>
+        <title>Custom sprite sheet animation</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="js/requestAnimationFrame.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    // sprite class
+                    function Sprite(config) {
+                        var __ = {};
+                        var frameIdx = 0,
+                            count = 0,
+                            countPerFrame = countPerFrame || 0,
+                            time = new Date().getTime();
+					
+                        __.context = config.context;
+                        __.width = config.width;
+                        __.height = config.height;
+                        __.image = config.image;
+                        __.numFrames = config.numberOfFrames || 1;
+                        __.loop = config.loop || false;
+                        __.fps = config.fps || 24;
+                        
+                        
+                        __.render = function() {
+                            // clear
+                            __.context.clearRect(0, 0, __.width, __.height);
+                            
+                            // draw
+                            __.context.drawImage(
+                                __.image, 
+                                frameIdx * __.width,
+                                0, 
+                                __.width, 
+                                __.height, 
+                                0, 
+                                0, 
+                                __.width, 
+                                __.height
+                            );
+                        };
+                        
+                        __.update = function() {
+                            count++;
+                            
+                            if(count > countPerFrame) {
+                                count = 0;
+                                
+                                if(frameIdx < __.numFrames - 1) {
+                                    frameIdx++;
+                                } else if (__.loop) {
+                                    frameIdx = 0;
+                                }
+                                
+                            }
+                        }
+                        
+                        __.play = function() {
+                            
+                            // request the next animation
+                            window.requestAnimationFrame(__.play);
+                            
+                            // get now
+                            var now = new Date().getTime(),
+                                dt = now - time;
+                        
+                            // draw
+                            if(dt > (1000 / __.fps)) {
+                                
+                                // set now
+                                time = now;
+                                
+                                //draw
+                                __.update();
+                                __.render();
+                            }
+                            
+                        }
+                        
+                        return __;
+                    }
+                    
+                    // helpers
+                    function addExplosionToScreen(callback) {
+                        // create the dom element
+                        var template =  '<canvas class="explosion"></canvas>';
+                        $('.container').append(template);
+                        
+                        // load the image
+                        var expImg = new Image();
+                        expImg.src = 'images/explosion1.png';
+                        
+                        // on load create the sprite
+                        $(expImg).on('load', function(evt) {
+                            
+                            // create sprite
+                            var explosion = Sprite({
+                                context: $('.explosion')[0].getContext('2d'),
+                                width: 192,
+                                height: 195,
+                                image: expImg,
+                                loop: false,
+                                numberOfFrames: 25,
+                                fps: 15
+                            });
+                            
+                            // return the sprite
+                            callback(explosion);
+                        });
+                        
+                    }
+                    
+                    // events
+                    $('.playExplosion').on('click', function(evt) {
+                        addExplosionToScreen(function(exp) {
+                            
+                            // play the sprite
+                            exp.play();
+                        });
+                    });
+                });
+            })(jQuery);
+        </script>
+        <link rel="stylesheet" type="text/css" href="css/reset.css" />
+        <style>
+            .container {
+                width: 600px;
+                margin: 0 auto;
+                position: relative;
+            }
+            
+            .cat {
+                width: 192px;
+                position: absolute;
+                top: 100px;
+                left: 204px;
+            }
+            
+            .explosion {
+                width: 192px;
+                height: 195px;
+                position: absolute;
+                top: 100px;
+                left: 204px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- sprite: 192 X 195 * 25 -->
+            <img class="cat" src="images/cat.png" />
+            <button class="playExplosion">Play Explosion</button>
+        </div>
+    </body>
+</html>

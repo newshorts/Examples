@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--
+Apple recommends closing browser tabs to get rid of memory crashes when working with large files
+
+http://w3facility.org/question/mobile-safari-ios-6-take-a-picture/
+
+
+-->
+<html>
+    <head>
+        <title>Photo Capture</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script>
+            (function($) {
+                $(window).load(function() {
+                    var input = $('.cam')[0];
+                    $(input).on('change', function(evt) {
+                        console.log(evt)
+                        console.log(input.files[0]);
+                    });
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <form method="post" enctype="multipart/form-data" action="index.php">
+                <input class="cam" type="file" name="image" accept="image/*" capture>
+            </form>
+        </div>
+    </body>
+</html>

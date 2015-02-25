@@ -1,0 +1,7 @@
+you execute the script, in this case "drywallSetup.sh" which in turn asks for a database name and then executes a javascript file containing the data you want to put in.
+
+Another way could be to run each mongo command inside shell, so (docs here: http://stackoverflow.com/questions/22367167/connecting-to-mongodb-from-bash-shell-script):
+
+```
+mongo localhost.com:27017/"$name" --eval "db.stats()"
+```
