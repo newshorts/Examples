@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="css/reset.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script>
+            'use strict';
+            
+            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+            
+            (function() {
+                $(window).load(function() {
+                    
+                    // streamPlayback
+                    var sp, sourceId;
+                    
+                    var videoSize = {
+                        width: 1920,
+                        height: 1080
+                    };
+                    
+                    function init() {
+                        
+                        if (typeof MediaStreamTrack === 'undefined'){
+                            alert('This browser does not support MediaStreamTrack.\n\nTry Chrome Canary.');
+                        } else {
+                            MediaStreamTrack.getSources(gotSources);
+                        }
+                    }
+                    
+                    function initWebcam() {
+                        if(navigator.getUserMedia) {
+                            sp = $('.streamPlayback')[0];
+                        } else {
+                            alert('no user media!');
+                            return;
+                        }
+                        
+                        var mandatory = {
+                            mandatory: {
+                                maxWidth: videoSize.width, 
+                                maxHeight: videoSize.height
+                            },
+                            optional: [
+                                {sourceId: sourceId}
+                            ]
+                        };
+                                ;
+                        var options = {
+                            video: mandatory,
+                            audio: false
+                        };
+                        navigator.getUserMedia(options, handleStream, handleStreamError);
+                    }
+                    
+                    function handleStream(stream) {
+                        var url = window.URL || window.webkitURL;
+                        // IMPORTANT: video element needs autoplay attribute or it will be frozen at first frame.
+                        sp.src = url ? url.createObjectURL(stream) : stream;
+                        sp.style.width = videoSize.width / 2 + 'px';
+                        sp.style.height = videoSize.height / 2 + 'px';
+                        sp.play();
+                    }
+                    
+                    function handleStreamError(error) {
+                        alert('error: ' + error);
+                        console.log(error);
+                        return;
+                    }
+                    
+                    function gotSources(sourceInfos) {
+                        for(var i = 0; i < sourceInfos.length; i++) {
+                            var si = sourceInfos[i];
+                            if(si.kind === 'video') {
+                                
+                                // could also face the 'user'
+                                if(si.facing === 'environment' || si.facing.length === 0) {
+                                    sourceId = si.id;
+                                    // init webcam
+                                    initWebcam();
+                                }
+                                console.log(si);
+                            }
+                        }
+                    }
+                    
+                    init();
+                    
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <video class="streamPlayback" autoplay></video>
+        </div>
+    </body>
+</html>

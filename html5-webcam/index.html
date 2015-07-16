@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>webcam</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="container">
+            <video id="peer2-to-peer1" autoplay controls style="width:40%;"></video>
+            <video id="peer1-to-peer2" autoplay controls style="width:40%;"></video>
+            <audio id="audiofile" controls>
+                <!--<source src="horse.ogg" type="audio/ogg">-->
+                <source src="horse.mp3" type="audio/mpeg">
+              Your browser does not support the audio element.
+          </audio>
+            <script>
+                
+                
+                window.onload = function() {
+                    var aud = document.getElementById('audiofile');
+                    aud.play();
+                    
+                    
+                    setTimeout(function() {
+                        aud.play();
+                    }, 1000);
+                }
+                
+             var mediaConstraints = {
+                 optional: [],
+                 mandatory: {
+                     OfferToReceiveAudio: true,
+                     OfferToReceiveVideo: true
+                 }
+             };
+             
+             var offerer, answerer;
+             var offererToAnswerer = document.getElementById('peer1-to-peer2');
+             var answererToOfferer = document.getElementById('peer2-to-peer1');
+
+             window.RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+             window.RTCSessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
+             window.RTCIceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
+
+            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+             window.URL = window.webkitURL || window.URL;
+
+             window.iceServers = {
+                 iceServers: [{
+                     url: 'stun:23.21.150.121'
+                 }]
+             };
+
+             /* offerer */
+
+             function offererPeer(stream) {
+                 offerer = new RTCPeerConnection(window.iceServers);
+                 offerer.addStream(stream);
+
+                 offerer.onaddstream = function (event) {
+                     offererToAnswerer.src = URL.createObjectURL(event.stream);
+                     offererToAnswerer.play();
+                 };
+
+                 offerer.onicecandidate = function (event) {
+                     if (!event || !event.candidate) return;
+                     answerer.addIceCandidate(event.candidate);
+                 };
+
+                 offerer.createOffer(function (offer) {
+                     offerer.setLocalDescription(offer);
+                     answererPeer(offer, stream);
+                 }, onSdpError, mediaConstraints);
+             }
+
+
+             /* answerer */
+
+             function answererPeer(offer, stream) {
+                 answerer = new RTCPeerConnection(window.iceServers);
+                 answerer.addStream(stream);
+
+                 answerer.onaddstream = function (event) {
+                     answererToOfferer.src = URL.createObjectURL(event.stream);
+                     answererToOfferer.play();
+                 };
+
+                 answerer.onicecandidate = function (event) {
+                     if (!event || !event.candidate) return;
+                     offerer.addIceCandidate(event.candidate);
+                 };
+
+                 answerer.setRemoteDescription(offer, onSdpSucces, onSdpError);
+                 answerer.createAnswer(function (answer) {
+                     answerer.setLocalDescription(answer);
+                     offerer.setRemoteDescription(answer, onSdpSucces, onSdpError);
+                 }, onSdpError, mediaConstraints);
+             }
+
+
+
+             function getUserMedia(callback) {
+                 navigator.getUserMedia({
+                     audio: true,
+                     video: true
+                 }, callback, onerror);
+
+                 function onerror(e) {
+                     console.error(e);
+                 }
+             }
+
+             getUserMedia(function (stream) {
+                 offererPeer(stream);
+             });
+
+             function onSdpError(e) {
+                 console.error('onSdpError', e);
+             }
+
+             function onSdpSucces() {
+                 console.log('onSdpSucces');
+             }
+            </script>
+        </div>
+    </body>
+</html>

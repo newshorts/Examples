@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            canvas {
+                background-color: black;
+            }
+            
+            video {
+                display: none;
+            }
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script>
+            (function() {
+                $(window).load(function() {
+                    console.log(document.body)
+                    
+                    var v = document.querySelector('video');
+                    var buffer = document.createElement('canvas');
+                    var btx = buffer.getContext('2d');
+//                    var canvas = $('.canvas').get(0);
+//                    var ctx = canvas.getContext('2d');
+                    var w = $(v).width();
+                    var h = $(v).height();
+
+                    console.log('width: ' + w + ' height: ' + h)
+
+                    $(buffer).width(w);
+                    $(buffer).height(h);
+
+                    // remove from document
+//                    console.log('removing node');
+                    $(v).remove();
+////                    v.parentNode.removeChild(v);
+                    console.log(document.querySelector('video'));
+
+                    v.addEventListener("contextmenu", function (e) { e.preventDefault(); e.stopPropagation(); }, false);
+
+                    // hide the controls if they're visible
+                    if (v.hasAttribute("controls")) {
+                        v.removeAttribute("controls");
+                    }
+
+                    $(window).on('click touchstart', function(evt) {
+                        v.play();
+                    });
+
+                    $(v).on('play', function(evt) {
+                        console.log('playing')
+                        console.log(evt)
+                        $('.container').append(buffer);
+                        draw();
+                    });
+
+                    function draw() {
+                        btx.drawImage(v, 0, 0, w, h);
+                        setTimeout(draw, 0);
+                    }
+                    
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <video playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="video/buck.mp4" style="transform: translateZ(0px);"></video>
+        <div class="container">            
+<!--            <video playsinline webkit-playsinline preload="auto" crossorigin="anonymous" src="http://www.mediactiv.com/video/Milano.mp4" loop style="transform: translateZ(0px);"></video>-->
+        </div>
+    </body>
+</html>
