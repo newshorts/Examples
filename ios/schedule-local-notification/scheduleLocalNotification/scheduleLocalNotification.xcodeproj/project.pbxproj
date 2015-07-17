@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		344E03B81B5B68DF00006C9C /* MyAlertsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 344E03B71B5B68DF00006C9C /* MyAlertsController.m */; };
+		344E03BE1B5B6BD000006C9C /* MyNotificationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 344E03BD1B5B6BD000006C9C /* MyNotificationController.m */; };
 		34ECAF581B58323E0017C661 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 34ECAF571B58323E0017C661 /* main.m */; };
 		34ECAF5B1B58323E0017C661 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 34ECAF5A1B58323E0017C661 /* AppDelegate.m */; };
 		34ECAF5E1B58323E0017C661 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34ECAF5D1B58323E0017C661 /* ViewController.m */; };
@@ -28,6 +30,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		344E03B61B5B68DF00006C9C /* MyAlertsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyAlertsController.h; sourceTree = "<group>"; };
+		344E03B71B5B68DF00006C9C /* MyAlertsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyAlertsController.m; sourceTree = "<group>"; };
+		344E03BC1B5B6BD000006C9C /* MyNotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyNotificationController.h; sourceTree = "<group>"; };
+		344E03BD1B5B6BD000006C9C /* MyNotificationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyNotificationController.m; sourceTree = "<group>"; };
 		34ECAF521B58323E0017C661 /* scheduleLocalNotification.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = scheduleLocalNotification.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34ECAF561B58323E0017C661 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34ECAF571B58323E0017C661 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -86,6 +92,10 @@
 			children = (
 				34ECAF7E1B5863140017C661 /* MyAppDataController.h */,
 				34ECAF7F1B5863140017C661 /* MyAppDataController.m */,
+				344E03B61B5B68DF00006C9C /* MyAlertsController.h */,
+				344E03B71B5B68DF00006C9C /* MyAlertsController.m */,
+				344E03BC1B5B6BD000006C9C /* MyNotificationController.h */,
+				344E03BD1B5B6BD000006C9C /* MyNotificationController.m */,
 				34ECAF591B58323E0017C661 /* AppDelegate.h */,
 				34ECAF5A1B58323E0017C661 /* AppDelegate.m */,
 				34ECAF5C1B58323E0017C661 /* ViewController.h */,
@@ -226,7 +236,9 @@
 			files = (
 				34ECAF5E1B58323E0017C661 /* ViewController.m in Sources */,
 				34ECAF801B5863140017C661 /* MyAppDataController.m in Sources */,
+				344E03BE1B5B6BD000006C9C /* MyNotificationController.m in Sources */,
 				34ECAF5B1B58323E0017C661 /* AppDelegate.m in Sources */,
+				344E03B81B5B68DF00006C9C /* MyAlertsController.m in Sources */,
 				34ECAF581B58323E0017C661 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -418,6 +430,7 @@
 				34ECAF771B58323E0017C661 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		34ECAF781B58323E0017C661 /* Build configuration list for PBXNativeTarget "scheduleLocalNotificationTests" */ = {
 			isa = XCConfigurationList;
@@ -426,6 +439,7 @@
 				34ECAF7A1B58323E0017C661 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

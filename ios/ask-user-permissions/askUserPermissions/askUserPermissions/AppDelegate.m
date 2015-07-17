@@ -41,6 +41,7 @@
         
         // TODO: then we need to set a local notification for 9:11AM and 9:11PM
         
+        
         // mark the app as already loaded for the first time
         [dataController setFirstTimeLoadingApp];
     }
@@ -84,15 +85,17 @@
 }
 
 // after the user clicks "allow" or "deny" on the local notification settings
+// can also retrieve these settings anywhere in the app
 - (void) application:(UIApplication *)application didRegisterUserNotificationSettings: (UIUserNotificationSettings *) notificationSettings
 {
     UIUserNotificationSettings *currentSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+    NSLog(@"UIUserNotificationSettings: %@", currentSettings);
     
-    if (currentSettings == UIUserNotificationTypeNone) {
+    if (currentSettings.types == UIUserNotificationTypeNone) {
         NSLog(@"user has set local notification settings to: UIUserNotificationTypeNone");
     }
     
-    if (currentSettings.types & UIUserNotificationTypeAlert & UIUserNotificationTypeBadge & UIUserNotificationTypeSound) {
+    if (currentSettings.types & UIUserNotificationTypeAlert && currentSettings.types & UIUserNotificationTypeBadge && currentSettings.types & UIUserNotificationTypeSound) {
         NSLog(@"we have all settings");
     }
 }

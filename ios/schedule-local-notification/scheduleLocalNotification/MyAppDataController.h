@@ -14,8 +14,10 @@
     AppDelegate *appDelegate;
 }
 
-- (BOOL) testBoolean;
+- (BOOL) isLocalNotificationsSet;
 - (BOOL) isFirstTimeLoadingApp;
 - (void) setFirstTimeLoadingApp;
+- (void) setLocalNotificationsSet;
+- (void) unsetLocalNotificationsSet;
 
 @end

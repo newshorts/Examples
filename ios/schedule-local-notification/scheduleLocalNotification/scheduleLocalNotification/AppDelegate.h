@@ -9,9 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @class MyAppDataController;
+@class MyAlertsController;
+@class MyNotificationController;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
     MyAppDataController *dataController;
+    MyAlertsController *alertsController;
+    MyNotificationController *notificationController;
 }
 
 @property (strong, nonatomic) UIWindow *window;

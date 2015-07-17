@@ -13,9 +13,16 @@
 
 #pragma mark - custom methods
 
-- (BOOL) testBoolean
+- (BOOL) isLocalNotificationsSet
 {
-    return YES;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:@"localNotificationsSet"] == nil) {
+        NSLog(@"local notifications are not set");
+        return NO;
+    } else {
+        NSLog(@"local notifications are set");
+        return YES;
+    }
 }
 
 - (BOOL) isFirstTimeLoadingApp
@@ -37,6 +44,18 @@
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[NSDate date] forKey:@"appInstalled"];
+}
+
+- (void) setLocalNotificationsSet
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[NSDate date] forKey:@"localNotificationsSet"];
+}
+
+- (void) unsetLocalNotificationsSet
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey:@"localNotificationsSet"];
 }
 
 @end

@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 #import "MyAppDataController.h"
+#import "MyAlertsController.h"
+#import "MyNotificationController.h"
 
 @interface AppDelegate ()
 
@@ -23,22 +25,25 @@
     
     // set classes
     dataController = [[MyAppDataController alloc] init];
+    alertsController = [[MyAlertsController alloc] init];
+    notificationController = [[MyNotificationController alloc] init];
     
-    // work with the classes
-    BOOL result = [dataController isFirstTimeLoadingApp];
-    if (result) {
+    // if its the first time loading the app
+    if ([dataController isFirstTimeLoadingApp]) {
+        
         // we need to ask the user to allow local notifications
         if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]) {
-            [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeSound|UIUserNotificationTypeBadge categories:nil]];
+            [notificationController askUserAllowLocalNotifications];
         } else {
             // cannot register local notification settings at this time
             NSLog(@"cannot register local notification settings");
+            [alertsController alertUnableToSetSettings];
         }
-        
-        // TODO: then we need to set a local notification for 9:11AM and 9:11PM
         
         // mark the app as already loaded for the first time
         [dataController setFirstTimeLoadingApp];
+    } else {
+        [self checkNotificationStatus];
     }
     
     // TODO: determine if it's 9:11 and handle which view we present accordingly
@@ -61,6 +66,8 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     NSLog(@"applicationWillEnterForeground");
+    
+    [self checkNotificationStatus];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
@@ -74,15 +81,48 @@
 }
 
 #pragma mark - custom notifications
-- (void) application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+- (void) application:(UIApplication *)application didReceiveLocalNotification: (UILocalNotification *) notification
 {
     NSLog(@"didReceiveLocalNotification");
 }
 
 // after the user clicks "allow" or "deny" on the local notification settings
-- (void) application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+// can also retrieve these settings anywhere in the app
+// this event should only fire on setup and not after
+- (void) application:(UIApplication *)application didRegisterUserNotificationSettings: (UIUserNotificationSettings *) notificationSettings
 {
-    NSLog(@"user did register notification settings with settings: %@", notificationSettings);
+    if ([notificationController hasPermissionForLocalNotification]) {
+        NSLog(@"we have permission");
+        // set the local notifications
+        if (![dataController isLocalNotificationsSet]) {
+            [notificationController set911LocalNotifications];
+            [dataController setLocalNotificationsSet];
+        }
+    } else {
+        NSLog(@"we dont have permission");
+    }
+}
+
+#pragma mark - helpers
+- (void) checkNotificationStatus
+{
+    if (![dataController isLocalNotificationsSet]) {
+        // user has not set the notifications
+        if ([notificationController hasPermissionForLocalNotification]) {
+            NSLog(@"setting local notifications since we have permission");
+            [notificationController set911LocalNotifications];
+            [dataController setLocalNotificationsSet];
+        } else {
+            NSLog(@"asking user for permission again");
+            [notificationController askUserAllowLocalNotifications];
+        }
+    } else {
+        if (![notificationController hasPermissionForLocalNotification]) {
+            NSLog(@"unsetting localnotificationset and asking for permission again");
+            [dataController unsetLocalNotificationsSet];
+            [notificationController askUserAllowLocalNotifications];
+        }
+    }
 }
 
 @end
