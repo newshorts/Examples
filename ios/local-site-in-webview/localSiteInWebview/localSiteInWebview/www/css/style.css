@@ -1,0 +1,130 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Jul 15, 2015, 10:13:55 AM
+    Author     : mike_newell
+*/
+
+html, body { height: 99%; }
+            
+::-webkit-scrollbar {  display: none;  }
+
+body {
+    background-color: black;
+}
+
+img, .world {
+    pointer-events: none;
+}
+
+.stage {
+    position: relative;
+    width: 375px;
+    height: 667px;
+    background-color: #94b7c6;
+    margin: 0 auto;
+    text-align: center;
+
+    overflow: hidden;
+}
+
+.world {
+    position: relative;
+    width: 1px;
+    height: 1px;
+    top: 99.9%;
+    left: 50%;
+    border: 1px solid red;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.ground,
+.empire,
+.cloud,
+.taxi,
+.spikey-building,
+.bridge,
+.nine-eleven,
+.bg-building-1,
+.bg-building-2,
+.bg-building-3 {
+    position: absolute;
+}
+
+.ground {
+    top: -79px;
+    left: -187px;
+}
+
+.empire {
+    top: -246px;
+    left: -38px;
+}
+
+.cloud1 { width: 24%; top: -27px; left: -53px; }
+.cloud2 { width: 14%; top: -27px; left: -53px; }
+.cloud3 { width: 20%; top: -27px; left: -53px; }
+.cloud4 { width: 30%; top: -27px; left: -53px; }
+.cloud5 { width: 15%; top: -27px; left: -53px; }
+.cloud6 { width: 25%; top: -27px; left: -53px; }
+.cloud7 { width: 21%; top: -27px; left: -53px; }
+.cloud8 { width: 18%; top: -27px; left: -53px; }
+.cloud9 { width: 14%; top: -27px; left: -53px; }
+.cloud10 { width: 24%; top: -27px; left: -53px; }
+.cloud11 { width: 20%; top: -27px; left: -53px; }
+.cloud12 { width: 16%; top: -27px; left: -53px; }
+
+/* hidden clouds */
+.cloud13 { width: 24%; top: -27px; left: -53px; }
+.cloud14 { width: 14%; top: -27px; left: -53px; }
+.cloud15 { width: 18%; top: -27px; left: -53px; }
+.cloud16 { width: 16%; top: -27px; left: -53px; }
+.cloud17 { width: 25%; top: -27px; left: -53px; }
+.cloud18 { width: 19%; top: -27px; left: -53px; }
+.cloud19 { width: 23%; top: -27px; left: -53px; }
+.cloud20 { width: 20%; top: -27px; left: -53px; }
+.cloud21 { width: 15%; top: -27px; left: -53px; }
+.cloud22 { width: 14%; top: -27px; left: -53px; }
+.cloud23 { width: 28%; top: -27px; left: -53px; }
+.cloud24 { width: 22%; top: -27px; left: -53px; }
+
+
+.taxi {
+    top: -37px;
+    left: -60px;
+}
+
+.spikey-building {
+    top: -297px;
+    left: -31px;
+}
+
+.bridge {
+    top: -64px;
+    left: -93px;
+}
+
+.nine-eleven {
+    top: -1111px;
+    left: -188px;
+}
+
+.bg-building-1 {
+    top: -220px;
+    left: -21px;
+}
+
+.bg-building-2 {
+    top: -142px;
+    left: -21px;
+}
+
+.bg-building-3 {
+    top: -151px;
+    left: -8px;
+}

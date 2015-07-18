@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<!--
+    @auther: Mike Newell
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--<link rel="stylesheet" type="text/css" href="css/reset.css" />-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <style>
+            
+        </style>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.17.0/TweenMax.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://code.createjs.com/createjs-2015.05.21.min.js"></script>
+        <script src="js/hammer.js"></script>
+        <script>
+            (function($) {
+                var stage, world;
+                var ground,
+                    empire,
+                    clouds,
+                    cloud1,
+                    cloud2,
+                    cloud3,
+                    cloud4,
+                    cloud5,
+                    cloud6,
+                    cloud7,
+                    cloud8,
+                    cloud9,
+                    cloud10,
+                    cloud11,
+                    cloud12,
+                    
+                    cloud13,
+                    cloud14,
+                    cloud15,
+                    cloud16,
+                    cloud17,
+                    cloud18,
+                    cloud19,
+                    cloud20,
+                    cloud21,
+                    cloud22,
+                    cloud23,
+                    cloud24,
+                    
+                    taxi,
+                    spikeyBuilding,
+                    bridge,
+                    nineEleven,
+                    bgBuilding1,
+                    bgBuilding2,
+                    bgBuilding3;
+                
+                var STAGE_WIDTH = 621;
+                var STAGE_HEIGHT = 1104;
+                
+                function preload(callback) {
+                    var queue = new createjs.LoadQueue();
+                    queue.installPlugin(createjs.Sound);
+                    queue.on("complete", function preloadComplete() {
+                        var city = queue.getResult('city');
+                        console.log(city);
+                        var citySound = createjs.Sound.play("city");
+                        citySound.volume = 0.5;
+                        
+                        setTimeout(function() {
+                            var risingSound = createjs.Sound.play("rising");
+                            risingSound.volume = 0.1;
+                        }, 10000);
+                        
+                        setTimeout(function() {
+                            var chimeSound = createjs.Sound.play("chimes");
+                            chimeSound.volume = 0.1;
+                        }, 25000);
+                        
+                        setTimeout(function() {
+                            var windOut = createjs.Sound.play("windOut");
+                            windOut.volume = 0.2;
+                            citySound.stop();
+                        }, 20000);
+                        
+                        callback();
+                        
+                    }, this);
+                    queue.loadFile({id:"city", src:"audio/city.mp3"});
+                    queue.loadFile({id:"chimes", src:"audio/chimes.mp3"});
+                    queue.loadFile({id:"rising", src:"audio/rising.mp3"});
+                    queue.loadFile({id:"windOut", src:"audio/wind-out.mp3"});
+                }
+                
+                function init() {
+                    
+                    stage = $('.stage');
+                    world = $('.world');
+                    
+                    TweenLite.set(stage, {
+                        'perspective-origin': '50% 99.9%',
+                        'perspective': '375px',
+                        'transform-style': 'preserve-3d'
+                    });
+                    
+                    ground = $('.ground');
+                    empire = $('.empire');
+                    
+                    cloud1 = $('.cloud1');
+                    cloud2 = $('.cloud2');
+                    cloud3 = $('.cloud3');
+                    cloud4 = $('.cloud4');
+                    cloud5 = $('.cloud5');
+                    cloud6 = $('.cloud6');
+                    cloud7 = $('.cloud7');
+                    cloud8 = $('.cloud8');
+                    cloud9 = $('.cloud9');
+                    cloud10 = $('.cloud10');
+                    cloud11 = $('.cloud11');
+                    cloud12 = $('.cloud12');
+                    
+                    // hidden clouds
+                    cloud13 = $('.cloud13');
+                    cloud14 = $('.cloud14');
+                    cloud15 = $('.cloud15');
+                    cloud16 = $('.cloud16');
+                    cloud17 = $('.cloud17');
+                    cloud18 = $('.cloud18');
+                    cloud19 = $('.cloud19');
+                    cloud20 = $('.cloud20');
+                    cloud21 = $('.cloud21');
+                    cloud22 = $('.cloud22');
+                    cloud23 = $('.cloud23');
+                    cloud24 = $('.cloud24');
+                    
+                    clouds = [cloud1[0], cloud2[0], cloud3[0], cloud4[0], cloud5[0], cloud6[0], cloud7[0], cloud8[0], cloud9[0], cloud10[0], cloud11[0], cloud12[0], 
+                        cloud13[0], cloud14[0], cloud15[0], cloud16[0], cloud17[0], cloud18[0], cloud19[0], cloud20[0], cloud21[0], cloud22[0], cloud23[0], cloud24[0]];
+                    
+                    taxi = $('.taxi');
+                    spikeyBuilding = $('.spikey-building');
+                    bridge = $('.bridge');
+                    nineEleven = $('.nine-eleven');
+                    bgBuilding1 = $('.bg-building-1');
+                    bgBuilding2 = $('.bg-building-2');
+                    bgBuilding3 = $('.bg-building-3');
+                    
+//                    convertElemsToPercents();
+                    
+                    positionXY();
+                    
+                    setupGestures();
+                    
+                    animateTaxi();
+                    
+//                    setTimeout(, 800);
+//                    animateFloatyClouds();
+                    for(var i = 0, len = clouds.length; i < len; i++) {
+                        
+                        if(i > 12) {
+                            clouds[i].isHiddenCloud = true;
+                        }
+                        
+                        addFloatToCloud(clouds[i]);
+//                        addWindToCloud(clouds[i]);
+                    }
+                    
+                    
+                    // pan up after a delay
+                    TweenLite.to(world, 10, {
+                        top: '166%',
+                        delay: 15
+                    });
+                }
+                
+                function panUpComplete() {
+                    // animate the clouds to bounce
+                    
+                }
+                
+                function setupGestures() {
+                    var pan = new Hammer(stage[0]);
+                    
+                    pan.get('pan').set({
+                        direction: Hammer.DIRECTION_ALL
+                    });
+                    
+                    pan.on('pandown', function (evt) {
+                        TweenLite.to(world, 1, {
+                            top: '166%',
+                            onComplete: panUpComplete
+                        });
+                    });
+                    
+                    pan.on('panup', function (evt) {
+                        TweenLite.to(world, 1, {
+                            top: '99.9%'
+                        });
+                    });
+                    
+                }
+                
+                function convertElemsToPercents() {
+                    convertToPercents(ground);
+                    convertToPercents(empire);
+                    convertToPercents(cloud1);
+                    convertToPercents(cloud2);
+                    convertToPercents(cloud3);
+                    convertToPercents(cloud4);
+                    convertToPercents(cloud5);
+                    convertToPercents(cloud6);
+                    convertToPercents(cloud7);
+                    convertToPercents(cloud8);
+                    convertToPercents(cloud9);
+                    convertToPercents(cloud10);
+                    convertToPercents(cloud11);
+                    convertToPercents(cloud12);
+                    
+                    convertToPercents(cloud13);
+                    convertToPercents(cloud14);
+                    convertToPercents(cloud15);
+                    convertToPercents(cloud16);
+                    convertToPercents(cloud17);
+                    convertToPercents(cloud18);
+                    convertToPercents(cloud19);
+                    convertToPercents(cloud20);
+                    convertToPercents(cloud21);
+                    convertToPercents(cloud22);
+                    convertToPercents(cloud23);
+                    convertToPercents(cloud24);
+                    
+                    convertToPercents(taxi);
+                    convertToPercents(spikeyBuilding);
+                    convertToPercents(bridge);
+                    convertToPercents(nineEleven);
+                    convertToPercents(bgBuilding1);
+                    convertToPercents(bgBuilding2);
+                    convertToPercents(bgBuilding3);
+                }
+//                
+                function convertToPercents(elem) {
+                    var width = elem.css('width');
+                    var top = elem.css('top');
+                    var left = elem.css('left');
+                      
+                    elem.css({
+                        width: ((parseInt(width) / STAGE_WIDTH) * 100).toFixed(2) + '%',
+                        top: ((parseInt(top) / STAGE_HEIGHT) * 100).toFixed(2) + '%',
+                        left: ((parseInt(left) / STAGE_WIDTH) * 100).toFixed(2) + '%'
+                    });
+                }
+                
+                function animateTaxi() {
+                    TweenLite.to(taxi, 2, {
+                        ease: Power0.easeNone,
+                        x: -370,
+                        onComplete: function() {
+                            console.log('done')
+                            TweenLite.set(taxi, {x: 370});
+                            setTimeout(animateTaxi, (Math.random() * 10000) + 1001);
+                        }
+                    });
+                }
+                
+//                function animateFloatyClouds() {
+//                    var cloudsTL = new TimelineMax({repeat: -1});
+//                    
+//                    cloudsTL.addLabel('down', 0);
+//                    cloudsTL.addLabel('up', 3);
+//                    cloudsTL.addLabel('reset', 6);
+//                    for(var i = 0, l = clouds.length; i < l; i++) {
+//                        (function() {
+//                            var alternate = (Math.random() - 0.5 > 0) ? -1 : 1;
+//                            var distance = (Math.random() * 9 + 1);
+//                            var origin = clouds[i]._gsTransform.y;
+//                            var max = 3;
+//                            var min = 2;
+//                            var timing = (Math.random() * (max - min) + min);
+//                            
+//                            cloudsTL.to(clouds[i], timing, {
+//                                y: clouds[i]._gsTransform.y + (distance * alternate),
+//                                ease: Power1.easeInOut
+//                            }, 'down');
+//                            
+//                            cloudsTL.to(clouds[i], timing, {
+//                                y: clouds[i]._gsTransform.y + (distance * (alternate * -1)),
+//                                ease: Power1.easeInOut
+//                            }, 'up');
+//                            
+//                            cloudsTL.to(clouds[i], timing, {
+//                                y: origin,
+//                                ease: Power1.easeInOut
+//                            }, 'reset');
+//                        })();
+//                    }
+//                    
+//                    cloudsTL.timeScale(1);
+//                    
+////                    for(var i = 0, l = clouds.length; i < l; i++) {
+////                        addWindToCloud(clouds[i]);
+////                    }
+//                }
+                
+                function addFloatToCloud(elem) {
+                    var alternate = (Math.random() - 0.5 > 0) ? -1 : 1;
+                    var distance = (Math.random() * 9 + 1);
+                    var origin = elem._gsTransform.y;
+                    var max = 4;
+                    var min = 3;
+                    var timing = (Math.random() * (max - min) + min);
+                    
+                    TweenLite.to(elem, timing, {
+                        y: elem._gsTransform.y + (distance * (alternate)),
+                        ease: Power1.easeInOut,
+                        onComplete: function() {
+                            TweenLite.to(elem, timing, {
+                                y: elem._gsTransform.y + (distance * (alternate * -1)),
+                                ease: Power1.easeInOut,
+                                onComplete: function() {
+                                    addFloatToCloud(elem);
+                                }
+                            });
+                        }
+                    });
+                }
+                
+                function addWindToCloud(elem) {
+                    
+                    var max = Math.random() * (20 - 10) + 10;
+                    var min = Math.random() * (20 - 10) + 10;
+                    
+                    if(!elem.hasOwnProperty('isFirstWind')) {
+                       elem.isFirstWind = true;
+                    }
+                    
+                    if(elem.isHiddenCloud && elem.isFirstWind) {
+                        max *= Math.random() * (20 - 10) + 10;
+                        min *= Math.random() * (20 - 10) + 10;
+                    }
+                    
+                    if(elem.isFirstWind) {
+                        
+                        
+                        // set its original position
+                        var sw = stage.width();
+                        var w = $(elem).width();
+                        var half = w/2;
+                        var end = -1 * ((sw/2) + half);
+                        var start = ((sw/2) + half);
+                        
+                        console.log('elem: ' + elem + ' starts at: ' + start + ' and ends at: ' + end);
+                                
+                        elem.originalXPosition = elem._gsTransform.x;
+                        elem.endPosition = end;
+                        elem.startPosition = start;
+                        
+                        TweenLite.to(elem, (Math.random() * (max - min)  + min), {
+                            x: elem.endPosition,
+                            ease: Linear.easeNone,
+                            onComplete: function() {
+                                elem.isFirstWind = false;
+                                addWindToCloud(elem);
+                            }
+                        });
+                    } else {
+                        TweenLite.set(elem, {
+                            x: elem.startPosition
+                        });
+                        
+                        TweenLite.to(elem, Math.random() * ((max*2) - (min*2)) + (min*2), {
+                            x: elem.endPosition,
+                            ease: Linear.easeNone,
+                            onComplete: function() {
+                                addWindToCloud(elem);
+                            }
+                        });
+                    }
+                }
+                
+                function positionXY() {
+                    
+//                    TweenLite.set(taxi, {x: 64,y: -38,z: 30});
+
+                    TweenLite.set(taxi, {x: 370,y: -38,z: 30});
+                    
+                    TweenLite.set(ground, {x: 0,y: 0,z: 25});
+                    
+                    TweenLite.set(spikeyBuilding, {x: 48,y: -54,z: 18});
+                    
+                    TweenLite.set(empire, {x: 112,y: -26,z: 15});
+                    
+                    TweenLite.set(bridge, {x: -19,y: -114,z: 10});
+                    
+                    TweenLite.set(cloud1, { x: 111, y: -330, z: 60 });
+                    TweenLite.set(cloud2, { x: 66, y: -404, z: 40 });
+                    TweenLite.set(cloud3, { x: -61, y: -319, z: 10 });
+                    TweenLite.set(cloud4, { x: -70, y: -532, z: 50 });
+                    TweenLite.set(cloud5, { x: 141, y: -542, z: 20 });
+                    TweenLite.set(cloud6, { x: 43, y: -626, z: 60 });
+                    TweenLite.set(cloud7, { x: -76, y: -652, z: 40 });
+                    
+                    TweenLite.set(cloud9, { x: 128, y: -793, z: 20 });
+                    TweenLite.set(cloud10, { x: -88, y: -857, z: 60 });
+                    TweenLite.set(cloud11, { x: 44, y: -912, z: 40 });
+                    TweenLite.set(cloud12, { x: 9, y: -986, z: 10 });
+                    
+                    // get a random
+                    function getHiddenCloudX() {
+                        return (Math.random() * (475 - 225) + 225);
+                    }
+                    TweenLite.set(cloud13, { x: getHiddenCloudX(), y: -330, z: 60 });
+                    TweenLite.set(cloud14, { x: getHiddenCloudX(), y: -404, z: 40 });
+                    TweenLite.set(cloud15, { x: getHiddenCloudX(), y: -319, z: 10 });
+                    TweenLite.set(cloud16, { x: getHiddenCloudX(), y: -532, z: 50 });
+                    TweenLite.set(cloud17, { x: getHiddenCloudX(), y: -542, z: 20 });
+                    TweenLite.set(cloud18, { x: getHiddenCloudX(), y: -626, z: 60 });
+                    TweenLite.set(cloud19, { x: getHiddenCloudX(), y: -652, z: 40 });
+                    TweenLite.set(cloud20, { x: getHiddenCloudX(), y: -793, z: 20 });
+                    TweenLite.set(cloud21, { x: getHiddenCloudX(), y: -857, z: 60 });
+                    TweenLite.set(cloud22, { x: getHiddenCloudX(), y: -912, z: 40 });
+                    TweenLite.set(cloud23, { x: getHiddenCloudX(), y: -920, z: 10 });
+                    TweenLite.set(cloud24, { x: getHiddenCloudX(), y: -985, z: 20 });
+                    
+                    TweenLite.set(nineEleven, {x: 0,y: 0,z: 0});
+                    
+                    TweenLite.set(cloud8, { x: 44, y: -699, z: -20 });
+                    
+                    TweenLite.set(bgBuilding1, {x: -53,y: -40,z: -15});
+                    TweenLite.set(bgBuilding3, {x: 147,y: -40,z: -16});
+                    TweenLite.set(bgBuilding2, {x: 90,y: -40,z: -20});
+                    
+                }
+
+                function parallax(x) {
+                    
+                    var w = $(window).width();
+                    var delta = (x - (w/2)) * 0.1;
+                    
+                    stage.css({
+                        'perspective-origin': ((delta / 1) + 40)+'% 99.9%'
+                    });
+                }
+
+                function handleMouseMove(evt) {
+                    var x = evt.clientX;
+                    var y = evt.clientY;
+                    
+                    parallax(x);
+                }
+                
+                function handleDeviceMotion(evt) {
+                    var rot = evt.originalEvent.gamma * -10;
+//                    console.log(rot);
+                    
+                    if(rot) {
+                        parallax(rot);
+                    }
+
+                }
+                
+                
+                $(window).load(function() {
+                    preload(function() {
+                        init();
+                    });
+                    
+                    $(window).on('mousemove', handleMouseMove);
+                    
+                    if (window.DeviceOrientationEvent) {
+                        $(window).on('deviceorientation', handleDeviceMotion);
+                    } else if (window.DeviceMotionEvent) {
+                        $(window).on('devicemotion', handleDeviceMotion);
+                    }
+                    
+                });
+            })(jQuery);
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12-fluid">
+                    <div class="stage">
+                        <div class="world">
+                            
+                            
+                            
+                            <img src="images/bg-building-1.svg" class="bg-building-1" />
+                            <img src="images/bg-building-2.svg" class="bg-building-2" />
+                            <img src="images/bg-building-3.svg" class="bg-building-3" />
+                            
+                            <img src="images/cloud.svg" class="cloud cloud8" />
+                            
+                            <img src="images/911.svg" class="nine-eleven" />
+                            
+                            <img src="images/cloud.svg" class="cloud cloud1" />
+                            <img src="images/cloud.svg" class="cloud cloud2" />
+                            <img src="images/cloud.svg" class="cloud cloud3" />
+                            <img src="images/cloud.svg" class="cloud cloud4" />
+                            <img src="images/cloud.svg" class="cloud cloud5" />
+                            <img src="images/cloud.svg" class="cloud cloud6" />
+                            <img src="images/cloud.svg" class="cloud cloud7" />
+                            
+                            <img src="images/cloud.svg" class="cloud cloud9" />
+                            <img src="images/cloud.svg" class="cloud cloud12" />
+                            <img src="images/cloud.svg" class="cloud cloud10" />
+                            <img src="images/cloud.svg" class="cloud cloud11" />
+                            
+                            
+                            <!-- hidden clouds off to the right -->
+                            <img src="images/cloud.svg" class="cloud cloud13" />
+                            <img src="images/cloud.svg" class="cloud cloud14" />
+                            <img src="images/cloud.svg" class="cloud cloud15" />
+                            <img src="images/cloud.svg" class="cloud cloud16" />
+                            <img src="images/cloud.svg" class="cloud cloud17" />
+                            <img src="images/cloud.svg" class="cloud cloud18" />
+                            <img src="images/cloud.svg" class="cloud cloud19" />
+                            <img src="images/cloud.svg" class="cloud cloud20" />
+                            <img src="images/cloud.svg" class="cloud cloud21" />
+                            <img src="images/cloud.svg" class="cloud cloud22" />
+                            <img src="images/cloud.svg" class="cloud cloud23" />
+                            <img src="images/cloud.svg" class="cloud cloud24" />
+                            
+                            <img src="images/bridge.svg" class="bridge" />
+                            
+                            <img src="images/empire.svg" class="empire" />
+                            <img src="images/spikey-building.svg" class="spikey-building" />
+                            
+                            <img src="images/ground.svg" class="ground" />
+                            
+                            <img src="images/taxi.svg" class="taxi" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
